@@ -356,7 +356,7 @@ System.out.println(i);
 
 
 
-直接b = a,b和a的引用相同，修改谁都会影响对方，若想分开很简单，只要引用不一样就行，再把数据复制一遍就可以了
+直接数组b = 数组a,b和a的引用相同，修改谁都会影响对方，若想分开很简单，只要引用不一样就行，再把数据复制一遍就可以了
 
 ![image-20250630104405205](D:\01\技术\感获\md文档\JavaSE.assets\image-20250630104405205.png)
 
@@ -468,9 +468,102 @@ public static void Fun(float f, int...nums){};
 
 ### 构造方法
 
-构造方法对类进行初始化
+构造方法对 对象 进行初始化，创建对象时会自动调用它，二者不是同一概念，注意区分
 
-我总觉着可以做更多，我可以在这个阶段做和类不相关的事，还可以……
+可以有多个构造器
+
+![image-20250701103658629](D:\01\技术\感获\md文档\JavaSE.assets\image-20250701103658629.png)
+
+
+
+可以在构造器里用this调用其它构造器
+
+为什么要这么做？我可能会对类进行不同的初始化，而不同的初始化也可能有相同的初始内容，为避免冗余，我直接调用，避免了冗余
+
+```java
+class T {
+    String name;
+    int age;
+
+    public T(String name, int age) {
+        this.name = name;
+        this.age = age;
+        System.out.println("T(String, int) 构造器");
+    }
+
+    public T() {
+        // 重复写赋值逻辑，冗余！
+        this.name = "jack";
+        this.age = 100; 
+        System.out.println("T() 构造器");
+    }
+}
+
+
+
+
+
+
+class T {
+    String name;
+    int age;
+
+    public T(String name, int age) {
+        this.name = name;
+        this.age = age;
+        System.out.println("T(String, int) 构造器");
+    }
+
+    public T() {
+		this("alice", 18);
+        System.out.println("T() 构造器");
+    }
+}
+```
+
+`this(...)` 是调用**本类的其他构造器**，`super(...)` 是调用**父类的构造器**，两者都是为了复用初始化逻辑，只不过作用范围不同。
+
+但是要注意：构造函数中只允许一次显式构造函数调用
+
+
+
+
+
+我总觉着可以做更多，我可以在构造阶段做和类不相关的事，还可以……
+
+
+
+
+
+
+
+
+
+类创建流程分析
+
+![image-20250701095550081](D:\01\技术\感获\md文档\JavaSE.assets\image-20250701095550081.png)
+
+![image-20250701095610981](D:\01\技术\感获\md文档\JavaSE.assets\image-20250701095610981.png)
+
+JVM 首次使用类时，通过类加载器将类的字节码（.class文件）加载到方法区，存储类的元信息（如类结构、方法字节码、静态变量等）。
+当执行new指令时，JVM 在堆区为对象分配内存空间，包括对象头（存储哈希码、锁状态等）和实例变量。
+对象内存分配后，所有字段先初始化为默认值（如int→0，boolean→false，引用类型→null）。
+显式赋值阶段：执行构造方法，按代码中的赋值语句（如int x = 10;）覆盖默认值。
+若为基本数据类型（如int、char），直接存储在堆区对象内部
+局部变量（如方法内的对象引用）存储在栈帧中，指向堆区对象的地址
+常量区仅存储编译期确定的常量值（如final变量、字符串字面量）
+
+
+
+
+
+没谁规定类必须被引用，因为没有引用，只能使用一次，这就是匿名类
+
+```java
+new Person().say(
+```
+
+
 
 
 
@@ -507,11 +600,250 @@ public static class Person {
 
 
 
+```java
+class Dog{
+    private String name;
+    private int age;
+    
+    public Dog(String name, int age){
+        name = name;
+        this = this;
+    }
+}
+
+// 由于作用域就近原则，构造方法里实际上是局部变量自己又赋给自己，并没有修改类的字段
+// 要用this
+```
 
 
 
 
 
+### 封装
+
+隐藏细节，便于使用，安全
+
+属性被private修饰，
+
+仅提供getset方法，写在构造器里，避免通过构造器绕过封装
+
+
+
+### 继承
+
+某些类有很多相同字段
+
+想在某个类基础上扩展
+
+
+
+```java
+extends	类
+    
+implements	接口
+    
+只能继承一个类    
+可以继承多个接口
+```
+
+
+
+私有属性、方法不能被继承，静态方法不能被重写，但是子类可以有同名静态方法来覆盖
+
+
+
+**对象引用，对象，类三者联系**
+
+对象是类的实例，类是对象的模板
+
+new是创建对象，构造器是初始化
+
+new先于构造器，如果使用new，就必定使用构造器初始化，构造器初始化在这里是new过程的一部分
+
+但构造器不依赖new，构造器是独立于new的，只是new的过程需要构造器
+
+
+
+Person p = new Person();
+
+过程是jvm:
+
+- 在堆中分配内存空间；
+- 初始化实例变量；
+- 执行构造器逻辑。
+
+p就是对象引用,指向对象在堆中地址
+
+- 引用是栈中的变量，对象是堆中的实体；
+
+`new`操作的本质：创建对象并返回引用
+
+
+
+
+
+![image-20250701135506285](D:\01\技术\感获\md文档\JavaSE.assets\image-20250701135506285.png)
+
+图片说的不明白，应该是子类必须调用父类的构造器，完成子类继承自父类的属性的初始化
+
+谁的属性就必须用谁的构造器初始化，即使被继承了
+
+
+
+- 子类构造器第一行隐式调用`super()`，目的是**初始化子类对象中父类的成员部分**，只是初始化，没有new，就没有创建独立的父类对象。
+
+- 父类构造器的调用是为了初始化子类对象中的父类成员，而非创建父类实例。
+
+子类对象的内存结构包含父类的所有成员变量（无论是否私有），但通过访问修饰符限制子类的直接访问权限。
+private的核心作用是语法层面的封装，而非物理上的分离
+父类的私有属性name是子类对象的一部分，随子类对象的创建而存在，不需要单独创建父类对象。访问修饰符private只是限制了类外直接访问，但不影响属性在对象内存中的存在。
+
+
+
+子类对象的初始化流程涉及**类加载**、**父类初始化**、**子类初始化**等多个阶段
+
+类加载检查：
+若子类或父类未被加载过，先加载类（静态成员初始化）
+
+第一次创建子类对象：
+父类静态代码块        ← 父类加载，静态初始化（仅首次）
+子类静态代码块        ← 子类加载，静态初始化（仅首次）
+父类实例代码块        ← 父类实例初始化
+父类构造器           ← 父类构造器执行
+子类实例代码块        ← 子类实例初始化
+子类构造器           ← 子类构造器执行
+
+第二次创建子类对象：
+父类实例代码块        ← 仅执行实例部分（静态部分不再执行）
+父类构造器
+子类实例代码块
+子类构造器
+
+
+
+子类继承父类，继承不仅继承父类字段，调用父类构造方法的时候，参数也会写入父类字段
+
+```java
+public static void main(String[] args)  {
+
+    Father fa = new Father();
+    System.out.println(fa.name);
+    
+    //输出结果是	小老虎
+}
+
+
+public static class GrandPa {
+    String name;
+
+    public GrandPa(String name) {
+        this.name = "小老虎";
+    }
+}
+
+    public static class Father extends GrandPa {
+        public Father() {
+            super("asd");
+        }
+	}
+
+```
+
+![image-20250701165702987](D:\01\技术\感获\md文档\JavaSE.assets\image-20250701165702987.png)
+
+这还涉及链式查询，就是说一个属性，如果子类找不到，就去父类
+
+![image-20250701165838571](D:\01\技术\感获\md文档\JavaSE.assets\image-20250701165838571.png)
+
+即使字段设为子类不可访问的，子类也能找到，不过无法直接访问
+
+若父类也没有，就一直找到object，若没有，则抛出异常
+
+
+
+
+
+
+
+若子类继承父类属性，并对属性修改，则子类字段中父类的属性也被修改为和子类一样
+
+```java
+public class Main {
+
+    public static void main(String[] args)  {
+
+        Father fa = new Father();
+        System.out.println(fa.name);
+        fa.sout();
+        //两个结果都是father
+    }
+
+
+    public static class GrandPa {
+        String name;
+
+        public GrandPa(String name) {
+            this.name = "name";
+        }
+
+        public GrandPa(){}
+
+    }
+
+    public static class Father extends GrandPa {
+        public Father() {
+            super();
+            this.name = "father";
+        }
+
+        public void sout(){
+            System.out.println(super.name);
+        }
+    }
+
+    public static class Son extends Father {
+        String name;
+
+        public Son(String name) {
+            super();
+        }
+    }
+
+
+}
+```
+
+
+
+
+
+因为super()和this()都要放在构造方法第1行，所以它俩不能共存于同一构造方法
+
+
+
+java中类是单继承，不使用接口的情况下如何让java实现多继承的效果？一句话，除了爸爸还有爷爷
+
+
+
+A继承B，B继承C，对于它们都有的属性，如何
+
+
+
+
+
+### super
+
+父类和子类没有重名字段，但是爷爷类有，则super访问爷爷类,若都有，遵循就近原则 
+
+
+
+
+
+
+
+
+
+### 多态
 
 
 
@@ -784,23 +1116,38 @@ public class Main {
 
 
 
+# 包
+
+## 组织类
+
+在一个包引用另一个包中的重名类
+
+![image-20250701122639374](D:\01\技术\感获\md文档\JavaSE.assets\image-20250701122639374.png)
+
+## 常用包
+
+![image-20250701122704619](D:\01\技术\感获\md文档\JavaSE.assets\image-20250701122704619.png)
+
+
+
+![image-20250701123142993](D:\01\技术\感获\md文档\JavaSE.assets\image-20250701123142993.png)
 
 
 
 
 
+## 访问权限
 
+| 访问控制修饰符 | 类内部 | 同包类 | 子类（不同包） | 其他包类 |
+| -------------- | ------ | ------ | -------------- | -------- |
+| `public`       | √      | √      | √              | √        |
+| `protected`    | √      | √      | √              | ×        |
+| 默认           | √      | √      | ×              | ×        |
+| `private`      | √      | ×      | ×              | ×        |
 
+修饰符可修饰 类、字段、成员方法
 
-
-
-
-
-
-
-
-
-
+类只能被publich和默认修饰
 
 
 
