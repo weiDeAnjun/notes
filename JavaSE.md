@@ -1079,6 +1079,95 @@ this代表类当前对象，所以静态方法中没有this、super
 
 
 
+类的五大成员：字段、方法、构造器、代码块、内部类
+
+
+
+### 内部类
+
+![image-20250703084351213](D:\01\技术\感获\md文档\JavaSE.assets\image-20250703084351213.png)
+
+内部类地位相当于局部变量，不能被权限符修饰
+
+
+
+内部类注意3点：定义位置、作用域、本质仍是类，地位相当于局部变量
+
+
+
+#### 局部内部类
+
+定义在方法体、代码块内
+
+访问外部类成员，通过	`外部类名.this.成员名`实现
+
+
+
+#### 匿名内部类
+
+每个类肯定都有名字以区分，匿名指的是没有用户定义得类名
+
+匿名内部类得名称是	外部类名$数字（数字从1开始）
+
+匿名内部类一般都是一次性的，但注意这个一次性，它不一定是单纯用了一次就释放（比如打印一条语句），也可能是完成一系列工作的这么1个动作，算是用了1次
+
+匿名内部类只是没有用户定义的类名，不代表不能用引用指向它，不要混淆概念
+
+接口不能实例化，使用匿名内部类会造成一种接口可以实例化的错觉
+
+"用完就没了" 通常指**匿名对象**（如 `new A() { ... }.say()`），这种写法
+
+```java
+public class Main {
+
+    public static void main(String[] args)  {
+
+        A a = new A(){
+            @Override
+            public void say(){
+                System.out.println("Hello World");
+            }
+        };
+        a.say();	//因为有引用，匿名类没被释放，3次调用都用的同一对象
+        a.say();	
+        a.say();
+        
+    }
+
+    
+    public  interface A{
+        int x = 1;
+
+        default void say(){};
+
+    }
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1443,21 +1532,52 @@ jdk8.0后可以有静态方法，默认方法(不是普通方法，default修饰
 
 接口不能继承类，只能继承接口
 
+![image-20250703081128543](D:\01\技术\感获\md文档\JavaSE.assets\image-20250703081128543.png)
+
+
+
 接口属性只能是public static final
 
 接口属性访问形式：接口名.属性名
 
 
 
+IDEA中只允许通过类名调用静态成员变量，但不这么做也允许通过。我想告诉自己的是：原理是可以这么做，但规范不允许这么做，遵守规范，知道原理
 
 
 
 
 
+## 接口和继承区别
 
+接口是对单继承的补充
 
+![image-20250703075810659](D:\01\技术\感获\md文档\JavaSE.assets\image-20250703075810659.png)
 
+```java
+public class Main {
 
+    public static void main(String[] args)  {
+
+    }
+
+    public static interface A{
+        int x = 1;
+    }
+
+    public static class B{
+        int x = 2;
+    }
+
+    public static class C extends B implements A{
+
+        public void fun(){
+            System.out.println(super.x+ A.x);
+        }
+    }
+
+}
+```
 
 
 
