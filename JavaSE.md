@@ -1148,6 +1148,15 @@ public class Main {
 
 
 
+#### 成员内部类
+
+添加在外部类的成员位置
+
+```java
+Inner in = new Outter().new Inner();
+
+Inner in = new Outter().getNewInnerInstance();	//通过方法，更方便
+```
 
 
 
@@ -1159,8 +1168,165 @@ public class Main {
 
 
 
+```java
+public class Main {
+
+    public static void main(String[] args)  {
+
+        A.B b = new A().new B();
+        b.say1();
+
+    }
+
+    
+    
+    public static class A{
+        private String str = "asd";
+
+        public void say(){
+            System.out.println(this.str);
+        }
+
+        class B {
+            private String strr;
+            public void say1(){
+                say();
+            }
+        }
+
+        class C {
+            void say2(){
+            }
+        }
+
+    }
+}
+
+在类的范围内，BC都能直接访问A，因为A是它们外部类，但BC彼此不能直接访问，因为它们是同级类
+外部类访问内部类需要先实例化内部类（static除外）
 
 
+子类不能访问父类私有内容，因为子类只是继承，不是内部类
+内部类也可以继承外部类，并使用继承操作
+```
+
+
+
+不考虑访问修饰符，静态
+
+java类访问机制默认是越内部越隐蔽，内部类能直接访问外部类，
+
+外部类需要通过内部类实例化才能间接访问，这又是因为，实现内部类必须依赖外部类，所以外部类想访问内部类就必须通过自己对内部类完成实例化
+
+内部类本就可以直接访问外部类，因为它是外部类的一部分，外部类对它来说没有秘密可言
+
+外部类本就可以直接访问内部类，但因为内部类实例化机制要求，所以不能直接访问，但其实理论上是可以直接访问的
+
+
+
+### 枚举类
+
+对于某些对象，如季节，天气，它们值固定且只读，用传统类体现不出来这些，用基本数据类型又不便统一，所以用枚举类
+
+![image-20250706125121014](D:\01\技术\感获\md文档\JavaSE.assets\image-20250706125121014.png)
+
+```java
+public class Main {
+
+    public static void main(String[] args)  {
+
+        System.out.println(Season.FALL.sea);
+    }
+
+    static class Season{
+
+        public static final Season SPRING = new Season("春天", "chun");
+        public static final Season SUMMER = new Season("春天", "chun");
+        public static final Season FALL = new Season("春天", "chun");
+        public static final Season WINTER = new Season("春天", "chun");
+
+
+        String sea;
+        String desc;
+
+        private Season(String sea, String desc){
+            this.sea = sea;
+            this.desc = desc;
+        }
+
+        public String getSea() {
+            return sea;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+    }
+}
+```
+
+也可以选择使用enum，常量对象要放在最前面
+
+```java
+enum Season{
+    SPRING("春天", "春"),
+    SUMMER("<夏天>", "夏"),
+    AUTUMN("<秋天>", "秋"),
+    WINTER("<冬天>", "冬");
+
+
+    String sea;
+    String desc;
+
+    private Season(String sea, String desc){
+        this.sea = sea;
+        this.desc = desc;
+    }
+
+    public String getSea() {
+        return sea;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+}
+
+
+//如果使用无参构造器，则可省略小括
+```
+
+
+
+枚举类本质也是类，但和普通类有很大不同：
+
+使用`enum`关键字定义，内部默认由多个枚举常量构成，每个枚举常量本质上是该枚举类的一个实例
+
+默认继承自`java.lang.Enum`类，并且不能再继承其他类，但可实现多个接口
+
+构造函数只能是私有的（默认私有）
+
+枚举常量在枚举类加载时就已经被实例化，且是全局唯一的，不能使用`new`关键字创建枚举实例
+
+枚举类不能被继承
+
+枚举类之间不能进行强制转换，即使是相同枚举类型的不同常量也不能进行强制转换 。
+
+![image-20250706141704716](D:\01\技术\感获\md文档\JavaSE.assets\image-20250706141704716.png)
+
+
+
+
+
+
+
+
+
+### 包装类
+
+![image-20250706180852700](D:\01\技术\感获\md文档\JavaSE.assets\image-20250706180852700.png)
+
+谁，实现了 谁的接口
 
 
 
@@ -1585,41 +1751,67 @@ public class Main {
 
 
 
+# 注解
 
+也称 元数据
 
+修饰	包、类、方法、属性、构造器、局部变量等
 
+注解也参与编译运行，嵌入代码的补充说明
 
+JavaSE中注解比较鸡肋，就是标记方法过时，忽略警告等
 
+但它在JavaEE中很重要
 
+<img src="D:\01\技术\感获\md文档\JavaSE.assets\image-20250706151225683.png" alt="image-20250706151225683" style="zoom:50%;" />
 
 
 
+## @Override
 
+从编译层面检查 某方法是否重写了父类
 
+就算不加这个注解，只要和 父类 返回值，参数列表，方法名一样，就达成重写了，加注解的目的是语法检查，检查是否重写了
 
+## @Deprecated
 
+jdk版本过渡
 
 
 
+## @SuppressWarnings
 
+抑制警告，通过输入指定字符串参数抑制指定警告
 
+@SuppressWarnings(“all”)	//抑制所有警告
 
+它仿制的位置就是抑制范围，如放在某变量定义语句上，范围就这一句话，如果是1个类，就抑制这个类
 
+除了元注解，不能再注解上加注解，上面那句不是因为注解注解出错而，而是找不到要注解的东西而错
 
+![image-20250706152550206](D:\01\技术\感获\md文档\JavaSE.assets\image-20250706152550206.png)
 
 
 
+## 元注解
 
+![image-20250706154603847](D:\01\技术\感获\md文档\JavaSE.assets\image-20250706154603847.png)
 
 
 
 
 
+### @Rention
 
+指定注解保留时长，只能修饰1个注解
 
+其包含一个必须指定值的RentionPolicy类型成员变量，正是该变量控制注解保留时长
 
+![image-20250706155037381](D:\01\技术\感获\md文档\JavaSE.assets\image-20250706155037381.png)
 
+3个值的区别就是注解作用时间范围
 
+<img src="D:\01\技术\感获\md文档\JavaSE.assets\image-20250706155547072.png" alt="image-20250706155547072" style="zoom: 50%;" />
 
 
 
@@ -1627,51 +1819,156 @@ public class Main {
 
 
 
+### @Target
 
+确定注解修饰的程序元素（类，构造器、局部变量、包、类型、字段、方法、参数）
 
 
 
 
 
+### @Inherited
 
+子类也继承注解
 
 
 
+# 异常
 
+出现一些不算严重的异常导致程序系统整个崩溃，这样显然不行，于是在可能出错的地方进行异常处理
 
+异常处理实现的效果是	出了异常，程序也能继续执行
 
 
 
+<img src="D:\01\技术\感获\md文档\JavaSE.assets\image-20250706161251924.png" alt="image-20250706161251924" style="zoom:50%;" />
 
+![image-20250706161428748](D:\01\技术\感获\md文档\JavaSE.assets\image-20250706161428748.png)
 
 
 
+## 运行时异常
 
+![image-20250706161822859](D:\01\技术\感获\md文档\JavaSE.assets\image-20250706161822859.png)
 
+## 编译时异常
 
+![image-20250706161938929](D:\01\技术\感获\md文档\JavaSE.assets\image-20250706161938929.png)
 
 
 
+## 异常处理方式
 
+### try-catch-finally
 
+程序员捕获异常并处理
 
+发生异常，则跳过后续代码，直接进入catch
 
+无论是否有异常，finally都会执行
 
 
 
+### throws
 
+交给调用者处理
 
+throws可以抛出生成的异常类型，也可以是父类
 
 
 
 
 
+默认throws，最终会给jvm，jvm处理方式就是打印异常信息，中断程序运行
 
+处理方法2选1就行
 
 
 
 
 
+可以会有多种异常，如果需要细分处理，就多catch
+
+
+
+![image-20250706165743970](D:\01\技术\感获\md文档\JavaSE.assets\image-20250706165743970.png)
+
+
+
+<img src="D:\01\技术\感获\md文档\JavaSE.assets\image-20250706171319274.png" alt="image-20250706171319274" style="zoom:50%;" />
+
+
+
+按照 Java 语法规则，`finally` 块 **必须执行**（除非遇到 `System.exit(0)` 等强制退出 JVM 的操作） 。所以，在 `catch` 块中准备返回 `3` 时，会先进入 `finally` 块，执行 `return 4;` 。
+
+**`return` 语句在 `try`/`catch` 块中执行时，会先 “暂存” 返回值，然后优先执行 `finally` 块，再根据 `finally` 块的情况决定最终返回结果** 
+
+
+
+
+
+编译异常必须处理，运行异常默认throws，子类重写父类方法抛出异常和父类一致或异常子类
+
+
+
+## 自定义异常
+
+![image-20250706172623750](D:\01\技术\感获\md文档\JavaSE.assets\image-20250706172623750.png)
+
+无论怎么细分，本质还是这2类异常
+
+```java
+import java.util.Scanner;
+
+public class Main {
+
+    static Scanner sc = new Scanner(System.in);
+
+    public static void main(String[] args) throws Exception {
+        int age;
+        age = sc.nextInt();
+        if (!(age >= 18 && age <= 20)){
+            throw new AgeException("年龄不对");	//调用，并传入参数
+        }
+    }
+
+    static class AgeException extends RuntimeException {
+        public AgeException(String message) {
+            super(message);	//调用父类，参数传给父类，父类一直传到throwable，然后打印
+        }
+    }
+
+}
+```
+
+![image-20250706174948889](D:\01\技术\感获\md文档\JavaSE.assets\image-20250706174948889.png)
+
+
+
+```java
+import java.io.IOException;
+import java.util.Scanner;
+
+public class Main {
+
+    static Scanner sc = new Scanner(System.in);
+
+    public static void main(String[] args) throws Exception {
+
+        try{
+            say();
+        }catch (RuntimeException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    static void say(){
+
+        throw new RuntimeException("dasd");
+    }
+
+}
+```
 
 
 
