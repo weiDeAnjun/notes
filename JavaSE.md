@@ -1,6 +1,6 @@
 361
 
-
+520
 
 
 
@@ -1376,27 +1376,43 @@ Integer.valueOf(int)源码👇
 
 ### String类
 
+字符串是数据一种表现形式
+
+String是java中的类，java.lang包下，用于代表和操作字符串
+
+String重写了equals，比较内容
+
 String类字符用unicode编码（无论字符汉字占2字节）
 
-String是final类，不可被继承
 
-String有属性private final char value[]	就是用它存储字符串内容	同时 因为这个属性是引用数据类型，又被final修饰，所以指向的地址不可修改，但这个地址里的内容可修改
+
+String是final类，不可被继承，具有**内容不可变性**
+
+```java
+String s = "abc";
+// 看似修改，实际是创建新的 String 对象
+s = s + "d"; 
+
+String引用可以执行其它对象，这是引用行为，和String本身不可变性无关
+这造成了Stirng内容可修改的错觉
+```
+
+通过 **私有属性 + 无修改方法 + 深拷贝构造** 共同实现的
+
+- 具体来说：
+    - `value` 是 `private`，外部无法直接访问；
+    - String 类的所有方法（如 `substring`、`replace`）都返回 **新的 String 对象**，而非修改原数组；
+    - 构造函数中若传入字符数组，会进行 **深拷贝**（如 `value = Arrays.copyOf(value, length)`），避免外部引用修改内部数组。
+
+
+
+String不可继承也是避免子类破坏其不可变性
+
+String有属性private final char value[]	就是用它存储字符串内容	同时 因为这个变量属性 是引用数据类型，又被final修饰，所以指向的地址不可修改，即永远指向同一数组对象，但这个数组里的内容可修改
 
 <img src="D:\01\技术\感获\md文档\JavaSE.assets\image-20250707170149233.png" alt="image-20250707170149233" style="zoom:50%;" />
 
 
-
-字符序列、字符串、不可变、String
-
-`String` 的 “不可变” 核心是 **内容不可变**（字符序列一旦创建无法修改）
-
-
-
-
-
-
-
-String重写了equals，比较内容
 
 
 
@@ -1422,15 +1438,122 @@ new
 
 
 
+![image-20250708094219417](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708094219417.png)
+
+编译器进行了优化，判断创建的常量池对象是否有引用指向
+
+
+
+<img src="D:\01\技术\感获\md文档\JavaSE.assets\image-20250708095821388.png" alt="image-20250708095821388" style="zoom:50%;" />
+
+<img src="D:\01\技术\感获\md文档\JavaSE.assets\image-20250708095805100.png" alt="image-20250708095805100" style="zoom:50%;" />
+
+![image-20250708121947967](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708121947967.png)
+
+
+
+通过对象组合，其底层使用StringBuffer的append，追加后内容不存在则在堆区生成（一般情况字符串在常量区生成，这里不是常量区，是堆区），然后指向它，然后返回的是buffer对象，C指向的是buffer
+
+
+
+#### String常用方法
+
+![image-20250708102146277](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708102146277.png)
+
+
+
+![image-20250708102427446](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708102427446.png)
+
+![image-20250708102436800](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708102436800.png)
 
 
 
 
 
+### StringBuffer
+
+内容可变，相较于String修改地址，效率高
+
+扩容机制，其父类内部有个char[]作为缓冲区，默认16字节，可通过构造函数改变
+
+适合多线程
+
+### StringBuilder
+
+适合单线程，因为不是线程安全的
 
 
 
+### 常用类
 
+![image-20250708105648603](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708105648603.png)
+
+![image-20250708105653742](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708105653742.png)
+
+```java
+Collections.sort(personList, new Comparator<Person>() {
+    @Override
+    public int compare(Person p1, Person p2) {
+        return p1.getAge() - p2.getAge(); // 这里返回值的正负决定排序顺序
+    }
+});
+
+
+Collections.sort(personList, new Comparator<Person>() {
+    @Override
+    public int compare(Object o1, Object o2) {
+        int i1 = (int)o1;
+        int i2 = (int)o2;
+        return i2 - i1; // 这里返回值的正负决定排序顺序
+    }
+});
+```
+
+这个自定义排序综合使用了匿名内部类，接口实现，动态绑定
+
+不是返回值大小本身直接影响排序结果，而是在特定的排序规则和比较逻辑中，返回值所代表的元素之间的大小关系决定了元素在排序后的序列中的位置
+
+
+
+System类常用方法
+
+![image-20250708111003932](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708111003932.png)
+
+Arrays的copy方法底层用的就是System
+
+
+
+![image-20250708112020860](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708112020860.png)
+
+大数据类型的运算有专门的方法，不要直接+-*/
+
+大数据类型的精度理论上无线，实际上看机器内存空间
+
+![image-20250708112559049](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708112559049.png)
+
+
+
+Date
+
+第一代日期类，搭配SimpleDateFormat，实现指定日期格式，字符串日期互转
+
+Calendar
+
+第二代
+
+抽象类，构造器私有
+
+![image-20250708120037987](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708120037987.png)
+
+提供一堆字段，自己组合着玩去
+
+第三代
+
+前两代都不能处理闰年，且线程不安全
+
+![image-20250708120305433](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708120305433.png)
+
+DateTimeFormatter
 
 
 
@@ -2097,6 +2220,232 @@ public class Main {
 
 }
 ```
+
+
+
+# 集合
+
+数组的不足就是存储同类，增删困难，长度固定
+
+集合可动态存储任意多对象并有配套操作方法
+
+注意	是否允许重复、是否有序、是否支持索引
+
+![image-20250708122947369](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708122947369.png)
+
+![image-20250708123331388](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708123331388.png)![image-20250708123340105](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708123340105.png)
+
+
+
+## Collection
+
+没有直接实现类，靠子接口Set、List实现
+
+## 迭代器
+
+![image-20250708131704004](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708131704004.png)
+
+![image-20250708132105966](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708132105966.png)
+
+还有foreach
+
+
+
+
+
+## List
+
+元素有序可重复，支持索引
+
+### ArrayList
+
+线程不安全，基本等同Vector，可存储null（允许多个）
+
+![image-20250708135428333](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708135428333.png)
+
+java的扩容机制就是 创建新数组，复制原数组内容至新数组
+
+`ArrayList`的扩容公式为：
+
+初始为10
+
+其后
+
+**新容量 = 旧容量 + (旧容量>> 1)**
+其中，`旧容量 >> 1` 表示将旧容量右移一位（相当于除以 2 并向下取整）
+
+若新容量（4）仍小于 **最小所需容量**（例如添加第 4 个元素时，最小所需容量为 4），则直接使用 **最小所需容量**。
+因此，最终容量为 **4**。	
+
+transient表示属性不会被序列化
+
+
+
+### Vector
+
+无参，默认10，之后2倍
+
+
+
+### LinkedList
+
+底层维护双向链表
+
+![image-20250708143247412](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708143247412.png)
+
+
+
+## Set
+
+无序、不允许重复、不支持索引
+
+最多1个null
+
+
+
+使用add（）会返回布尔值，若重复添加返回false，重复元素不会被加入set
+
+![image-20250708145206910](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708145206910.png)
+
+这种情况不算重复元素，都能加进去
+
+![image-20250708145320471](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708145320471.png)
+
+
+
+set确定元素是否重复的机制是：
+
+
+
+
+
+### HashSet
+
+底层是	数组+链表+红黑树
+
+
+
+![image-20250708150108497](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708150108497.png)
+
+
+
+### LinkedHashSet
+
+![image-20250708162942195](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708162942195.png)
+
+ <img src="D:\01\技术\感获\md文档\JavaSE.assets\image-20250708163145190.png" alt="image-20250708163145190" style="zoom:50%;" />
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
