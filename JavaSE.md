@@ -2331,11 +2331,109 @@ set确定元素是否重复的机制是：
 
 ### LinkedHashSet
 
-![image-20250708162942195](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708162942195.png)
+<img src="D:\01\技术\感获\md文档\JavaSE.assets\image-20250708162942195.png" alt="image-20250708162942195" style="zoom:50%;" />
 
- <img src="D:\01\技术\感获\md文档\JavaSE.assets\image-20250708163145190.png" alt="image-20250708163145190" style="zoom:50%;" />
+ <img src="D:\01\技术\感获\md文档\JavaSE.assets\image-20250709084313969.png" alt="image-20250709084313969" style="zoom:50%;" />
 
- 
+ ![image-20250709084245594](D:\01\技术\感获\md文档\JavaSE.assets\image-20250709084245594.png)
+
+`nkedHashMap` 是 `HashMap` 的子类，`LinkedHashMap` 内部的 `Entry` 其实是继承自 `HashMap.Node` 并做了扩展
+
+
+
+## Map
+
+![image-20250709090612679](D:\01\技术\感获\md文档\JavaSE.assets\image-20250709090612679.png)
+
+对于key相同的情况，map不像set那样不加入，而是替换掉
+
+![image-20250709092255627](D:\01\技术\感获\md文档\JavaSE.assets\image-20250709092255627.png)
+
+Node实现了Map.Entry接口，进行了向上转型
+
+![image-20250709092637749](D:\01\技术\感获\md文档\JavaSE.assets\image-20250709092637749.png)
+
+  包装好几层也是为了方便使用，套娃一样，Node包装key，value。entry包装node，enrtySet包装entry
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
