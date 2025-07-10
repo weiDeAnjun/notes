@@ -2345,7 +2345,9 @@ set确定元素是否重复的机制是：
 
 ![image-20250709090612679](D:\01\技术\感获\md文档\JavaSE.assets\image-20250709090612679.png)
 
-对于key相同的情况，map不像set那样不加入，而是替换掉
+key相同，map便视作相同元素
+
+对于元素相同的情况，map不像set那样不加入，而是替换掉
 
 ![image-20250709092255627](D:\01\技术\感获\md文档\JavaSE.assets\image-20250709092255627.png)
 
@@ -2357,7 +2359,68 @@ Node实现了Map.Entry接口，进行了向上转型
 
 
 
+Map迭代方式，有3种，每种都能用迭代器，共6种
 
+```java
+import java.io.IOException;
+import java.util.*;
+
+public class Main {
+
+    static Scanner sc = new Scanner(System.in);
+
+    public static void main(String[] args) throws Exception {
+
+        Map map = new HashMap();
+        map.put("1", "1");
+        map.put("2", "2");
+        map.put("3", "3");
+        map.put("4", "4");
+        map.put("5", "5");
+
+        Set keySet = map.keySet();
+
+        // 1 通过keySet集合
+        for (Object key : keySet) {
+            System.out.println(map.get(key));
+        }
+
+        Iterator it = keySet.iterator();
+        while (it.hasNext()) {
+            System.out.println(map.get(it.next()));
+        }
+
+        // 2 通过values
+        Collection values = map.values();
+        for (Object value : values){
+            System.out.println(value);
+        }
+
+        // 3 通过EntrySet
+        Set entrySet = map.entrySet();
+        for (Object entry : entrySet){
+            Map.Entry m = (Map.Entry) entry;
+            System.out.println(m.getKey());
+        }
+
+        Iterator iterator = entrySet.iterator();
+        while (iterator.hasNext()){
+            Map.Entry m = (Map.Entry) iterator.next();
+            System.out.println(m.getValue());
+        }
+
+    }
+
+    public static class Node{
+        int age;
+    }
+
+    public static class Nodee extends Node{
+
+    }
+}
+
+```
 
 
 
