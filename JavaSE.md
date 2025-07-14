@@ -2,7 +2,7 @@
 
 520a
 
-
+集合类的底层源码那些我都没好好听
 
 
 
@@ -931,6 +931,122 @@ public static void main(String[] args) {
 
 - **普通对象头**：包含哈希码、分代年龄、锁状态等。
 - **数组对象头**：额外包含数组长度信息。
+
+
+
+### 类转换会出错
+
+类转换出错通常发生在以下几种情况：
+
+#### 1. 没有继承关系的类型转换
+
+当尝试将两个没有继承或实现关系的类进行转换时，会出现错误。例如，`Animal`类和`Car`类之间没有任何继承或实现联系，若尝试把`Car`对象转换为`Animal`对象，或者反之，就会导致编译错误或者运行时抛出`ClassCastException`异常。
+
+```java
+class Animal {}
+class Car {}
+
+public class Main {
+    public static void main(String[] args) {
+        Car car = new Car();
+        // 以下代码编译不通过，因为Car和Animal没有继承关系
+        // Animal animal = (Animal) car; 
+    }
+}
+```
+
+在运行时，如果通过反射等手段绕过编译检查进行这样的转换，就会抛出`ClassCastException`。
+
+#### 2. 向下转型时类型不匹配
+
+在存在继承关系的类中，进行向下转型（将父类对象转换为子类对象）时，如果实际引用的对象不是目标子类的实例，就会出错。比如`Animal`是父类，`Dog`是子类，当一个`Animal`类型的引用实际指向的是`Cat`对象，却将其转换为`Dog`对象时，就会在运行时抛出`ClassCastException`异常。
+
+```java
+class Animal {}
+class Dog extends Animal {}
+class Cat extends Animal {}
+
+public class Main {
+    public static void main(String[] args) {
+        Animal animal = new Cat();
+        // 运行时会抛出ClassCastException，因为animal实际指向的是Cat对象
+        Dog dog = (Dog) animal; 
+    }
+}
+```
+
+为了避免这种错误，可以在转型前使用`instanceof`关键字进行判断，确认对象类型后再进行转换。
+
+```java
+class Animal {}
+class Dog extends Animal {}
+class Cat extends Animal {}
+
+public class Main {
+    public static void main(String[] args) {
+        Animal animal = new Cat();
+        if (animal instanceof Dog) {
+            Dog dog = (Dog) animal; 
+        } else {
+            System.out.println("对象不是Dog类型，无法转换");
+        }
+    }
+}
+```
+
+#### 3. 泛型类型转换错误
+
+在使用泛型时，如果进行类型转换的方式不符合泛型的规则，也会出错。例如，从`List`中获取元素并进行类型转换时，如果`List`实际存储的元素类型与期望转换的类型不一致，就会出现问题。虽然在编译时泛型会进行类型擦除，但运行时仍可能因为类型不匹配抛出`ClassCastException`。
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+public class Main {
+    public static void main(String[] args) {
+        List<Integer> integerList = new ArrayList<>();
+        integerList.add(1);
+        // 以下代码编译时会警告，运行时会抛出ClassCastException
+        String str = (String) integerList.get(0); 
+    }
+}
+```
+
+#### 4. 枚举类型转换错误
+
+枚举类型之间不能进行强制转换，即使它们属于同一枚举类型的不同常量也不行。并且枚举类型与其他非枚举类型之间也不能进行强制转换，否则会导致编译错误或运行时异常。
+
+```java
+enum Season {
+    SPRING, SUMMER, AUTUMN, WINTER
+}
+public class Main {
+    public static void main(String[] args) {
+        Season season = Season.SPRING;
+        // 以下代码编译报错，不能对枚举常量进行强制转换
+        // Season anotherSeason = (Season) Season.SPRING; 
+    }
+}
+```
+
+#### 5. 包装类和基本类型转换错误
+
+虽然 Java 提供了自动装箱和拆箱功能，但如果在不合适的情况下进行显式的错误转换，也会出错。比如，将`Integer`类型直接强制转换为`double`类型，需要先拆箱再进行类型转换，否则会导致编译错误。
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Integer num = 10;
+        // 以下代码编译错误，不能直接将Integer强制转换为double
+        // double d = (double) num; 
+        double d = num.doubleValue(); // 正确的方式，先拆箱再转换
+    }
+}
+```
+
+
+
+
 
 
 
@@ -2227,11 +2343,15 @@ public class Main {
 
 # 集合
 
-数组的不足就是存储同类，增删困难，长度固定
+数组的不足就是 只能存储同类型参数，仅查改有优势，长度固定无法扩容，功能单调
+
+集合算是对数组的优化
+
+
 
 集合可动态存储任意多对象并有配套操作方法
 
-注意	是否允许重复、是否有序、是否支持索引
+要注意  是否允许重复、是否有序、是否支持索引 3个关键点
 
 ![image-20250708122947369](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708122947369.png)
 
@@ -2263,9 +2383,15 @@ public class Main {
 
 线程不安全，基本等同Vector，可存储null（允许多个）
 
+
+
+底层
+
 ![image-20250708135428333](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708135428333.png)
 
-java的扩容机制就是 创建新数组，复制原数组内容至新数组
+![image-20250714132304476](D:\01\技术\感获\md文档\JavaSE.assets\image-20250714132304476.png)![image-20250714132316444](D:\01\技术\感获\md文档\JavaSE.assets\image-20250714132316444.png)
+
+java的扩容机制就是 创建新数组，复制原数组内容至新数组 
 
 `ArrayList`的扩容公式为：
 
@@ -2285,13 +2411,19 @@ transient表示属性不会被序列化
 
 ### Vector
 
-无参，默认10，之后2倍
+线程安全，无参
+
+![image-20250714131615993](D:\01\技术\感获\md文档\JavaSE.assets\image-20250714131615993.png)
+
+
+
+
 
 
 
 ### LinkedList
 
-底层维护双向链表
+![image-20250714132501157](D:\01\技术\感获\md文档\JavaSE.assets\image-20250714132501157.png)
 
 ![image-20250708143247412](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708143247412.png)
 
@@ -2343,6 +2475,48 @@ set确定元素是否重复的机制是：
 
 
 
+
+
+### TreeSet
+
+默认无序
+
+可以在构造方法加入构造器
+
+如果没传入，使用添加对象实现的Compareable的compareTo()比较方法
+
+如果添加对象也没有：因为底层对类的对象 强制转换 为 Compareable，未实现就进行强制转换，会因为不存在继承或实现关系而报错
+
+比如
+
+![image-20250714130819713](D:\01\技术\感获\md文档\JavaSE.assets\image-20250714130819713.png)
+
+
+
+
+
+
+
+![image-20250714130337841](D:\01\技术\感获\md文档\JavaSE.assets\image-20250714130337841.png)
+
+可以看出TreeSet和TreeMap的去重机制和comparable捆绑了
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Map
 
 ![image-20250709090612679](D:\01\技术\感获\md文档\JavaSE.assets\image-20250709090612679.png)
@@ -2359,7 +2533,11 @@ Node实现了Map.Entry接口，进行了向上转型
 
   包装好几层也是为了方便使用，套娃一样，Node包装key，value。entry包装node，enrtySet包装entry
 
+线程不安全
 
+
+
+### Map迭代方式
 
 Map迭代方式，有3种，每种都能用迭代器，共6种
 
@@ -2428,6 +2606,39 @@ public class Main {
 
 
 
+### HashMap
+
+![image-20250714112441802](D:\01\技术\感获\md文档\JavaSE.assets\image-20250714112441802.png)
+
+![image-20250714112707043](D:\01\技术\感获\md文档\JavaSE.assets\image-20250714112707043.png)
+
+
+
+### Hash Table
+
+k-v均不能为null，线程安全
+
+k相同，则替换
+
+
+
+Hash Table允许null而hashmap不允许因为table诞生于java框架早期，那时设计思想保守，对null处理严格，而对于hashmap，null的hash值固定，不影响存储
+
+![image-20250714115717398](D:\01\技术\感获\md文档\JavaSE.assets\image-20250714115717398.png)
+
+
+
+![image-20250714120536738](D:\01\技术\感获\md文档\JavaSE.assets\image-20250714120536738.png)
+
+可以配合properties配置文件
+
+
+
+
+
+### TreeMap
+
+![image-20250714130348382](D:\01\技术\感获\md文档\JavaSE.assets\image-20250714130348382.png)
 
 
 
@@ -2439,18 +2650,9 @@ public class Main {
 
 
 
+## 集合类的选择
 
-
-
-
-
-
-
-
-
-
-
-
+![image-20250714120945174](D:\01\技术\感获\md文档\JavaSE.assets\image-20250714120945174.png)
 
 
 
