@@ -2731,7 +2731,7 @@ public class Main {
 
 在定义类、接口、方法时使用类型参数
 
-在编译期，编译器就知道了指定泛型 
+在编译期，编译器就知道了指定泛型 这也是为什么能进行类型检查
 
 
 
@@ -2779,7 +2779,8 @@ public static < E > void printArray( E[] inputArray )
          }
          System.out.println();
     }
-// void前面写泛型表示方法可以处理的类类型在泛型E内，形参列表是表示形参类型在泛型E范围内
+// void前面写泛型表示方法可以处理的类类型在泛型E内，实现方法多类型通用
+//	形参列表是表示形参类型在泛型E范围内
 ```
 
 **java 中泛型标记符：**
@@ -2791,7 +2792,7 @@ public static < E > void printArray( E[] inputArray )
 - **N** - Number（数值类型）
 - **？** - 表示不确定的 java 类型
 - ？ extends A  -支持A以及A的子类
-- ？ super A      -支持A以及A的子类 
+- ？ super A      -支持A以及A的父类 
 
 
 
@@ -2828,32 +2829,252 @@ class Animal <T, E, R> {
 
 
 
-泛型数组不能初始化
-
-​	不确定类型，就不确定大小，就无法开辟空间
-
-
-
 静态方法不能使用类泛型
 
-泛型类的类型在创建对象时确定的（因为创建对象时，需要指定确定类型）
+泛型  类的类型在创建对象时确定的（因为创建对象时，需要指定确定类型）
 
 
-
-
-
-![image-20250718123736457](D:\01\技术\感获\md文档\JavaSE.assets\image-20250718123736457.png)
 
 泛型不具备继承性
 
+![image-20250718123736457](D:\01\技术\感获\md文档\JavaSE.assets\image-20250718123736457.png)
 
 
 
 
-**泛型的局限**
 
-- **类型擦除**：Java 中的泛型在编译后，类型参数会被擦除，替换为其限定的上界（默认为 `Object` ）。这会导致在运行时无法获取泛型的具体类型信息，也无法使用泛型类型进行 `instanceof` 判断。
-- **不能实例化泛型数组**：不能直接创建泛型类型的数组，如 `T[] array = new T[10];` 是不合法的，因为类型擦除后，数组的实际类型无法确定。但可以通过其他方式间接实现类似功能，如使用 `Object[]` 数组再进行类型转换。
+## 类型擦除
+
+泛型 通过类型擦除（Type Erasure）机制实现
+
+
+
+在编译期间，Java编译器会将所有的泛型信息移除，并且在生成的字节码中使用原始类型（通常是`Object`或者指定了上界的类型）来代替具体的泛型参数。这意味着在运行时，JVM并不保留泛型的具体类型信息。
+
+擦除就是把泛型类型信息擦除为原始类型
+
+运行时无法获取泛型的具体类型信息，也无法使用泛型类型进行 `instanceof` 判断。
+
+
+
+可以看出类型擦除先把类型变为上限类型，以便兼容，然后又通过编译器在背后把类型不断转换为合法类型
+
+泛型的关键是类的类型，这会涉及类型转换，类型擦除关键之一就是类型转换
+
+### 擦除过程
+
+类型替换：所有泛型类型的实例都会被替换为它们最接近的非泛型上限。如果没有指定上限，则默认为Object。例如，List<String>会被替换为List<Object>，而List<? extends Number>会被替换为List<Number>。
+
+插入桥接方法：为了保持多态性，当一个子类继承了父类并且重写了带有泛型的方法签名时，编译器会在子类中插入额外的方法，这些方法被称为桥接方法。这些方法的存在是为了确保父类和子类之间的方法调用能够正确地进行类型转换。
+
+强制类型转换：虽然实际的对象是以Object的形式存在，但编译器会在适当的地方插入强制类型转换的代码，以确保只有正确的类型可以被放入集合或从集合中取出。这样可以在编译阶段就检查出类型不匹配的问题。
+
+未受检警告：对于那些使用了原始类型（即没有泛型参数的旧式集合）的代码，编译器会产生未受检警告，但是仍然允许这样的代码存在，以便向后兼容旧版本的Java代码。
+
+**实际对象以`Object`形式存在的例子：**
+
+```java
+List<String> stringList = new ArrayList<>();
+stringList.add("Hello");
+String first = stringList.get(0);
+```
+
+​        在编译后的字节码中，List<String>实际上变成了List（即List<Object>），而添加和获取元素的操作则包含了隐式的类型转换：
+
+stringList.add("Hello"); 会被编译成 stringList.add((Object)"Hello");
+String first = stringList.get(0); 会被编译成 String first = (String)stringList.get(0);
+        因此，在运行时，stringList内部存储的是Object类型的引用，只是编译器帮助我们在编译时进行类型检查和必要的类型转换。
+
+
+
+## **泛型对于数组**
+
+
+
+****类型擦除机制**和**数组的协变特性 导致 **泛型数组  不能直接  初始化**（如 `new T[10]` 或 `new List<String>[10]`）
+
+
+
+泛型在编译后会进行**类型擦除**，**数组在运行时会检查元素类型**
+
+```java
+List<String>[] stringLists = new List<String>[10]; // 假设泛型数组初始化是合法的
+List<Integer> intList = Arrays.asList(1, 2, 3);
+// 在假设前提下，两个数组都擦除为List<Object>
+stringLists[0] = intList; // 编译时类型匹配，但运行时数组检查元素类型不一致，抛出 ArrayStoreException
+```
+
+
+
+java数组是协变的，即 `Sub[]` 可以赋值给 `Super[]`，本来这个特性没问题，但结合泛型就有问题了，这种赋值在运行时可能导致 `ArrayStoreException 数组存储异常`  
+
+```java
+Object[] array = new String[5]; // 合法：数组协变
+array[0] = 123; // 编译通过，但运行时抛出 ArrayStoreException
+```
+
+如果允许创建泛型数组（如 `List<String>[]`），结合数组协变，会导致更严重的类型安全问题：
+
+```java
+List<String>[] stringLists = new List<String>[10]; // 假设合法
+Object[] objects = stringLists; // 数组协变，合法
+objects[0] = new ArrayList<Integer>(); // 编译通过，但运行时应报错
+```
+
+此时，`stringLists[0]` 实际存储了 `List<Integer>`，但编译器认为它是 `List<String>`，后续读取会导致 `ClassCastException`。
+
+
+
+所以禁止直接初始化泛型数组，禁止原因无非就是类型转换不合法问题，解决这个就行
+
+### 替代方案：
+
+#### （1）使用通配符数组（有限制）
+
+```java
+List<?>[] array = new List<?>[10]; // 合法
+array[0] = new ArrayList<String>();
+array[1] = new ArrayList<Integer>();
+// 只能读取元素（类型为 Object），不能添加元素（除 null 外）
+```
+
+因为<?>是不确定类型，或者说任意类型，读的话可以直接向上转Object，但写的话，编译器无法确定类型，所以只能写null
+
+
+
+#### （2）通过类型转换（需抑制警告）
+
+```java
+@SuppressWarnings("unchecked")
+List<String>[] array = (List<String>[]) new List[10]; // 合法，但需承担类型风险
+```
+
+#### （3）使用集合替代数组
+
+```java
+List<List<String>> list = new ArrayList<>(); // 安全替代方案
+```
+
+
+
+#### **（4）泛型类内部的数组处理**
+
+在泛型类中，可以通过 `Object[]` 间接实现泛型数组，但需谨慎处理类型转换：
+
+```java
+public class GenericArray<T> {
+    private Object[] array;
+
+    @SuppressWarnings("unchecked")
+    public GenericArray(int size) {
+        array = new Object[size];
+    }
+
+    public T get(int index) {
+        return (T) array[index]; // 可能需要 ClassCastException 风险
+    }
+
+    public void set(int index, T value) {
+        array[index] = value;
+    }
+}
+```
+
+
+
+### 泛型数组使用场景
+
+以上说的是泛型数组，泛型数组需要解决类型转换和数组斜变的问题才能用，不如直接用集合
+
+| **场景**     | **数组**                                      | **集合**                                |
+| ------------ | --------------------------------------------- | --------------------------------------- |
+| **泛型支持** | 不支持直接创建泛型数组（如 `List<String>[]`） | 完全支持泛型（如 `List<List<String>>`） |
+| **类型安全** | 协变特性导致运行时风险                        | 不可变特性保证编译时安全                |
+| **读写限制** | `List<?>[]` 可读但写入受限（只能写 null）     | `List<List<String>>` 读写均类型安全     |
+
+
+
+但有些场景还是要用泛型数组：
+
+#### 紧凑的内存布局、高效的随机访问，数组的使用场景自然是能大显它的优点的场景
+
+```java
+// 自定义泛型数组实现的动态数组（简化版）
+public class GenericArray<T> {
+    private T[] array; // 泛型数组作为内部存储
+    private int size;
+
+    @SuppressWarnings("unchecked")
+    public GenericArray(int capacity) {
+        // 无法直接new T[]，需通过Object数组转型（内部使用，可控）//使用替代方案
+        array = (T[]) new Object[capacity]; 
+    }
+
+    public void add(T element) {
+        if (size < array.length) {
+            array[size++] = element;
+        }
+    }
+
+    public T get(int index) { // O(1) 随机访问，比集合的封装更高效
+        return array[index];
+    }
+}
+```
+
+
+
+#### 与 legacy 代码（旧代码）交互
+
+早期API依赖数组作为参数或返回值，但是需要处理泛型数据
+
+
+
+#### 反射场景中动态创建数组
+
+反射场景常常需要动态创建数组，类型不顶，自然需要泛型数组
+
+例如，在泛型方法中根据类型参数创建数组：
+
+```java
+public static <T> T[] createArray(Class<T> clazz, int length) {
+    // 反射创建泛型数组（合法且安全）
+    return (T[]) Array.newInstance(clazz, length); 
+}
+
+// 使用
+String[] strArray = createArray(String.class, 5);
+Integer[] intArray = createArray(Integer.class, 10);
+```
+
+
+
+#### 需要固定大小且类型安全的容器
+
+```java
+// 基于泛型数组的固定大小栈
+public class GenericStack<T> {
+    private T[] elements;
+    private int top = -1;
+
+    @SuppressWarnings("unchecked")
+    public GenericStack(int maxSize) {
+        elements = (T[]) new Object[maxSize]; // 固定大小，无扩容开销
+    }
+
+    public void push(T e) {
+        if (top < elements.length - 1) {
+            elements[++top] = e;
+        }
+    }
+
+    public T pop() {
+        return elements[top--];
+    }
+}
+```
+
+
 
 
 
@@ -2880,19 +3101,74 @@ public void fun(){}
 
 
 
+# Java图形绘制
+
+Jpanel类
+
+![ ](D:\01\技术\感获\md文档\JavaSE.assets\image-20250719104108611.png)
+
+![image-20250719104110659](D:\01\技术\感获\md文档\JavaSE.assets\image-20250719104110659.png)
+
+graphics类方法
+
+![image-20250719105652627](D:\01\技术\感获\md文档\JavaSE.assets\image-20250719105652627.png)
 
 
 
+```java
+package tankgame.xxx.draw;
+
+import javafx.scene.layout.Pane;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class DrawCircle extends JFrame {//画框，画板嵌入其中
+
+    private MyPanel mp = null;
+
+    public static void main(String[] args) {
+        new DrawCircle();
+    }
 
 
+    public DrawCircle() {
+        // 初始化画板
+        mp = new MyPanel();
+        // 画板嵌入画框
+        this.add(mp);
+        // 设置大小
+        this.setSize(1000, 900);
+        this.setVisible(true);//可见性
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    }
+}
+
+class MyPanel extends JPanel {//画板
+
+    @Override
+    public void paint(Graphics g) {//绘图方法//g是画笔
+        super.paint(g);
+
+        g.drawOval(10, 10, 100, 100);//画了个空心圆
+        g.drawLine(100, 10, 100, 100);
+        g.setColor(Color.CYAN);//设置颜色
+        g.fillOval(10, 10, 100, 100);// 填充颜色
+        // 注意，不是必须先画图形再填色，不花图形也能填色
+        //画图片
+            //获取图片资源
+        Image image = Toolkit.getDefaultToolkit().getImage(Panel.class.getResource("/tankgame/images/circle1.png"));
+        g.drawImage(image, 10, 10, this);
+
+        //设置字体
+        g.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        g.drawString("Hello", 10, 20);//定义位置是字体左下角
+    }
 
 
-
-
-
-
-
-
+}
+```
 
 
 
