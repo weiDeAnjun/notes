@@ -1,6 +1,6 @@
 361
 
-520
+520a
 
 集合类的底层源码那些我都没好好听
 
@@ -1776,23 +1776,23 @@ public class Main {
 
 ## 运算符优先级
 
-| 优先级 | 运算符                                                       | 结合性      | 说明                                          |                      |                  |
-| ------ | ------------------------------------------------------------ | ----------- | --------------------------------------------- | -------------------- | ---------------- |
-| 1      | `.`、`()`、`{}`、`;`、`,`                                    | -           | 成员访问、方法调用等                          |                      |                  |
-| 2      | `++`（后缀）、`--`（后缀）                                   | L→R         | 后缀自增 / 自减                               |                      |                  |
-| 3      | `++`（前缀）、`--`（前缀）、`~`、`!`、`(类型)`               | R→L         | 前缀自增 / 自减、按位非、逻辑非、强制类型转换 |                      |                  |
-| 4      | `*`、`/`、`%`                                                | L→R         | 乘、除、取模                                  |                      |                  |
-| 5      | `+`（算术加）、`-`（算术减）                                 | L→R         | 加法、减法                                    |                      |                  |
-| 6      | `<<`、`>>`、`>>>`                                            | L→R         | 算数左移、算数（带符号）右移、逻辑（无符号）右移    |                      |                  |
-| 7      | `<`、`>`、`<=`、`>=`、`instanceof`                           | L→R         | 关系比较、类型判断                            |                      |                  |
-| 8      | `==`、`!=`                                                   | L→R         | 相等、不相等判断                              |                      |                  |
-| 9      | `&`（按位与）                                                | L→R         | 按位与运算                                    |                      |                  |
-| 10     | `^`                                                          | L→R         | 按位异或                                      |                      |                  |
-| 11     | `                                                            | `（按位或） | L→R                                           | 按位或运算           |                  ||
-| 12     | `&&`                                                         | L→R         | 短路与（逻辑与）                              |                      |                  |
-| 13     | `                                                            |             | `                                             | L→R                  | 短路或（逻辑或） |||
-| 14     | `? :`                                                        | R→L         | 三元条件运算符                                |                      |                  |
-| 15     | `=`、`*=`、`/=`、`%=`、`+=`、`-=`、`<<=`、`>>=`、`>>>=`、`&=`、`^=`、` | =`          | R→L                                           | 赋值及复合赋值运算符 |                  ||
+| 优先级 | 运算符                                                       | 结合性 | 说明                                             |      |      |
+| ------ | ------------------------------------------------------------ | ------ | ------------------------------------------------ | ---- | ---- |
+| 1      | `.`、`()`、`{}`、`;`、`,`                                    | -      | 成员访问、方法调用等                             |      |      |
+| 2      | `++`（后缀）、`--`（后缀）                                   | L→R    | 后缀自增 / 自减                                  |      |      |
+| 3      | `++`（前缀）、`--`（前缀）、`~`、`!`、`(类型)`               | R→L    | 前缀自增 / 自减、按位非、逻辑非、强制类型转换    |      |      |
+| 4      | `*`、`/`、`%`                                                | L→R    | 乘、除、取模                                     |      |      |
+| 5      | `+`（算术加）、`-`（算术减）                                 | L→R    | 加法、减法                                       |      |      |
+| 6      | `<<`、`>>`、`>>>`                                            | L→R    | 算数左移、算数（带符号）右移、逻辑（无符号）右移 |      |      |
+| 7      | `<`、`>`、`<=`、`>=`、`instanceof`                           | L→R    | 关系比较、类型判断                               |      |      |
+| 8      | `==`、`!=`                                                   | L→R    | 相等、不相等判断                                 |      |      |
+| 9      | `&`（按位与）                                                | L→R    | 按位与运算                                       |      |      |
+| 10     | `^`                                                          | L→R    | 按位异或                                         |      |      |
+| 11     | `                                                            | `（按位或） | L→R    | 按位或运算                                       |      |      |
+| 12     | `&&`                                                         | L→R    | 短路与（逻辑与）                                 |      |      |
+| 13     | `                                                            |             | ` | L→R    | 短路或（逻辑或）                                 |      |      |
+| 14     | `? :`                                                        | R→L    | 三元条件运算符                                   |      |      |
+| 15     | `=`、`*=`、`/=`、`%=`、`+=`、`-=`、`<<=`、`>>=`、`>>>=`、`&=`、`^=`、` | =` | R→L    | 赋值及复合赋值运算符                             |      |      |
 
 三元运算符，一真大师
 
@@ -2340,6 +2340,16 @@ public class Main {
 
 }
 ```
+
+
+
+
+
+# Lambda没讲
+
+
+
+
 
 
 
@@ -3115,6 +3125,8 @@ graphics类方法
 
 
 
+绘制默认从左上到右下
+
 ```java
 package tankgame.xxx.draw;
 
@@ -3174,59 +3186,361 @@ class MyPanel extends JPanel {//画板
 
 
 
+# java事件
+
+- **事件（Event）**：描述发生了什么，交互产生(比如我按下键盘，产生event事件)
+- **事件源（Event Source）**：事件源是产生触发事件的对象
+- **监听器（Listener）**：接收事件源产生的对象并处理。
+
+事件监听机制是一种**观察者模式**的实现，可以将事件的发生和处理解耦，提高代码的灵活性和可维护性。
+
+
+
+事件源和监听器都是接口
+
+类实现接口，那就是产生什么事件，监听什么事件
+
+
+
+事件类型
+
+![image-20250724085652774](D:\01\技术\感获\md文档\JavaSE.assets\image-20250724085652774.png)
+
+![image-20250724085642987](D:\01\技术\感获\md文档\JavaSE.assets\image-20250724085642987.png)
+
+
+
+## 事件模型
+
+```java
+// 自定义事件类
+class Event {
+    private String type;
+    private Object data;
+
+    public Event(String type, Object data) {
+        this.type = type;
+        this.data = data;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public Object getData() {
+        return data;
+    }
+}
+
+// 事件监听器接口
+interface EventListener {
+    void onEvent(Event event);
+}
+
+// 事件发布者类
+class EventPublisher {
+    private List<EventListener> listeners = new ArrayList<>();
+
+    public void addListener(EventListener listener) {
+        listeners.add(listener);
+    }
+
+    public void publishEvent(Event event) {
+        for (EventListener listener : listeners) {
+            listener.onEvent(event);
+        }
+    }
+}
+
+// 具体的事件监听器实现
+class MyEventListener implements EventListener {
+    @Override
+    public void onEvent(Event event) {
+        if ("DATA_READY".equals(event.getType())) {
+            System.out.println("Data is ready: " + event.getData());
+        }
+    }
+}
+
+public class EventDrivenProgrammingExample {
+    public static void main(String[] args) {
+        EventPublisher publisher = new EventPublisher();
+        publisher.addListener(new MyEventListener());
+
+        Event event = new Event("DATA_READY", "Sample Data");
+        publisher.publishEvent(event); // 触发事件，通知所有监听器
+    }
+}
+```
+
+这段代码演示了如何定义一个简单的事件类`Event`，一个事件监听器接口`EventListener`，以及一个事件源类`EventPublisher`。`MyEventListener`是具体的监听器实现，它响应特定类型的事件。`main`方法中展示了如何将监听器添加到发布者，并发布一个事件。
+
+
+
+## 自定义
+
+### 自定义事件
+
+自定义事件通常通过继承`java.util.EventObject`类来创建。这个类提供了基本的事件功能，包括事件的来源和时间戳。
+
+自定义事件类应该能够封装与事件相关的所有数据。这可能包括事件类型、触发事件的对象、以及其他任何需要传递给监听器的信息。
+
+
+
+```java
+import java.util.EventObject;
+
+// 自定义事件类，继承自EventObject
+class CustomEvent extends EventObject {
+    private String eventType;
+    private Object eventData;
+
+    public CustomEvent(Object source, String eventType, Object eventData) {
+        super(source);
+        this.eventType = eventType;
+        this.eventData = eventData;
+    }
+
+    public String getEventType() {
+        return eventType;
+    }
+
+    public Object getEventData() {
+        return eventData;
+    }
+}
+
+// 自定义事件监听器接口
+interface CustomEventListener {
+    void onEvent(CustomEvent event);
+}
+
+public class CustomEventExample {
+    public static void main(String[] args) {
+        // 创建事件源
+        Object eventSource = new Object();
+
+        // 创建自定义事件
+        CustomEvent event = new CustomEvent(eventSource, "CUSTOM_TYPE", "Sample Data");
+
+        // 创建事件监听器并处理事件
+        CustomEventListener listener = new CustomEventListener() {
+            @Override
+            public void onEvent(CustomEvent event) {
+                System.out.println("Received event: " + event.getEventType());
+                System.out.println("Event data: " + event.getEventData());
+            }
+        };
+
+        // 模拟事件分发
+        listener.onEvent(event);
+    }
+}
+```
+
+上面代码演示了如何定义一个自定义事件类`CustomEvent`，它封装了事件类型和数据。我们还定义了一个`CustomEventListener`接口，并在`main`方法中模拟了事件的创建和分发。
+
+
+
+### 自定义监听器
+
+```java
+// 定义一个自定义的事件监听器接口
+interface CustomEventListener {
+    void onCustomEvent(CustomEvent event);
+}
+
+// 实现自定义事件监听器
+class MyCustomEventListener implements CustomEventListener {
+    @Override
+    public void onCustomEvent(CustomEvent event) {
+        if ("DATA_UPDATED".equals(event.getEventType())) {
+            System.out.println("Data updated event received with data: " + event.getEventData());
+            // 处理数据更新事件
+        }
+    }
+}
+
+public class EventListenerImplementation {
+    public static void main(String[] args) {
+        // 创建事件源和事件
+        Object eventSource = new Object();
+        CustomEvent event = new CustomEvent(eventSource, "DATA_UPDATED", "New Data");
+
+        // 创建监听器实例
+        CustomEventListener listener = new MyCustomEventListener();
+
+        // 触发事件并通知监听器
+        listener.onCustomEvent(event);
+    }
+}
+```
+
+
+
+允许事件从一个对象传递到多个监听器，确保所有感兴趣的监听器都能接收并响应事件。
+
+在多线程环境中，事件处理需要特别注意线程安全。Java的`Swing`线程模型要求所有对`Swing`组件的修改都必须在事件分发线程（EDT）上执行。
+
+
+
+### 事件发布过程
+
+事件发布机制允许事件源在特定事件发生时通知所有注册的监听器。在Java中，这通常是通过调用监听器接口中定义的方法来实现的。
+
+```java
+// 定义事件源类
+class EventSource {
+    private List<CustomEventListener> listeners = new ArrayList<>();
+
+    public void addEventListener(CustomEventListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeEventListener(CustomEventListener listener) {
+        listeners.remove(listener);
+    }
+
+    public void fireEvent(CustomEvent event) {
+        for (CustomEventListener listener : listeners) {
+            listener.onCustomEvent(event);
+        }
+    }
+}
+
+public class EventPublishingMechanism {
+    public static void main(String[] args) {
+        // 创建事件源
+        EventSource eventSource = new EventSource();
+
+        // 创建监听器并注册到事件源
+        CustomEventListener listener = new MyCustomEventListener();
+        eventSource.addEventListener(listener);
+
+        // 创建并触发事件
+        CustomEvent event = new CustomEvent(eventSource, "DATA_UPDATED", "Updated Data");
+        eventSource.fireEvent(event);
+
+        // 移除监听器
+        eventSource.removeEventListener(listener);
+    }
+}
+```
+
+
+
+### 多线程中事件处理
+
+```java
+import javax.swing.*;
+import java.awt.event.*;
+
+public class MultiThreadedEventHandling {
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Multithreaded Event Example");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(300, 200);
+
+        // 创建一个按钮并添加到框架
+        JButton button = new JButton("Start Long-Running Task");
+        frame.getContentPane().add(button);
+
+        // 为按钮添加事件监听器
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // 在新线程中执行耗时任务
+                Thread taskThread = new Thread(() -> {
+                    // 模拟耗时任务
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException ie) {
+                        ie.printStackTrace();
+                    }
+
+                    // 在事件分发线程上更新UI
+                    SwingUtilities.invokeLater(() -> {
+                        System.out.println("Long-running task completed.");
+                        // 可以安全地更新UI或发布事件
+                    });
+                });
+
+                taskThread.start();
+            }
+        });
+
+        frame.setVisible(true);
+    }
+}
+```
 
 
 
 
 
+# 多线程
+
+程序运行产生进程，系统会为进程分配内存空间，1个进程有多个线程
+
+并发：同一时刻，多个任务交替执行	单核cpu实现多任务就是并发
+
+并行：同一时刻，多个任务共同执行	多核cpu可以实现并行
 
 
 
+## 使用线程的方法
+
+![image-20250724104710795](D:\01\技术\感获\md文档\JavaSE.assets\image-20250724104710795.png)
+
+![image-20250724104746113](D:\01\技术\感获\md文档\JavaSE.assets\image-20250724104746113.png)
 
 
 
+### 继承Thread
+
+当类继承了Thread，类就可以当作线程使用
 
 
 
+在多线程中，子线程不会因为主线程结束而结束，需要执行完毕，所有线程结束，进程才结束
+
+调用.start()，start会调用run，那为什么不直接调用.run()？
+
+因为直接调用run()是调用方法，和线程无关了，start才是启动线程
 
 
 
+### 实现Runnable接口
 
+因为java是单继承，如果类已经继承，则无法继承Thread
 
+```java
+// 继承Runnable接口
 
+public class Main {
 
+    public static void main(String[] args) throws Exception {
 
+        Thread thread = new Thread(new Cat());
+        thread.start();
+    }
 
+}
 
+class Cat implements Runnable {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @Override
+    public void run() {
+        while (true) {
+            System.out.println("???");
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+}
+```
 
 
 
