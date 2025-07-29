@@ -3544,6 +3544,135 @@ class Cat implements Runnable {
 
 
 
+## 线程常用方法
+
+![image-20250729091144693](D:\01\技术\感获\md文档\JavaSE.assets\image-20250729091144693.png)
+
+中断线程不是直接中止线程，而是设置中断标志触发特定异常，让线程自行决定何时中止，还有用于中断线程的休眠
+
+sleep()必须被包围是因为线程存在被中断的可能，比如用interrupt（）
+
+interrupt替代了线程stop方法，stop直接中断线程，导致收尾工作未进行（比如释放资源），完善了stop
+
+
+
+![image-20250729091914186](D:\01\技术\感获\md文档\JavaSE.assets\image-20250729091914186.png)
+
+yield增大概率
+
+插队是让别人插，在自己内部 xx.join（），xx就插进来了
+
+
+
+
+
+## 守护线程
+
+一般来说线程是工作线程
+
+守护线程是为工作线程服务的，它在工作线程结束后自动结束，比如gc就是守护线程
+
+```java
+线程.setDaemon(true);	//设置为守护线程
+```
+
+不能指定具体守护谁，也不要想着把 守护线程 当 工作线程 用，职责不明
+
+
+
+## 线程7大状态
+
+![image-20250729101656519](D:\01\技术\感获\md文档\JavaSE.assets\image-20250729101656519.png)
+
+图中只有6个，但其中Runnable细化为Ready和Running
+
+![image-20250729101737933](D:\01\技术\感获\md文档\JavaSE.assets\image-20250729101737933.png)
+
+
+
+
+
+## 线程同步
+
+Synchronized
+
+多线程场景下同一时间只允许1个线程访问，防止多线程的问题
+
+
+
+同步原理
+
+实现同步是通过锁(互斥锁)，线程们去竞争锁，获得锁的可使用同步代码
+
+
+
+
+
+可以修饰	方法（静态、非静态）、代码块
+
+### 方法
+
+![image-20250729105017522](D:\01\技术\感获\md文档\JavaSE.assets\image-20250729105017522.png)
+
+
+
+#### 对于非静态
+
+```java
+public synchronized void doWork() {
+    // 方法体
+}
+
+等价于
+
+public void doWork() {
+    synchronized (this) {
+        // 方法体
+    }
+}
+```
+
+
+
+**也可以用其他对象当锁（但需要是同一个对象）**
+不想用 `this` 当锁，也可以手动指定其他对象作为锁，但必须保证**所有需要同步的代码块都使用同一个**
+
+```java
+private Object lock = new Object();
+
+public void doWork() {
+    synchronized (lock) {
+        // 方法体
+    }
+}
+
+public void doAnotherWork() {
+    synchronized (lock) {
+        // 方法体
+    }
+}
+```
+
+
+
+#### 对于静态
+
+锁对象是 “当前类的 Class 对象”（每个类在 JVM 中只有一个 `Class` 对象）
+
+```java
+public static synchronized void staticDoWork() {
+    // 方法体
+}
+
+等价于
+    
+public static void staticDoWork() {
+    synchronized (当前类.class) { 
+        // 比如类叫 MyClass，就是 MyClass.class
+        // 方法体
+    }
+}
+```
 
 
 
@@ -3551,48 +3680,55 @@ class Cat implements Runnable {
 
 
 
+因为静态、非静态同步方法的锁（`this`）**不是同一把锁**，即使是同一个类的实例，静态和非静态同步方法之间也不会互相阻塞。
 
 
 
 
 
+### 代码块
+
+```java
+synchronized(锁对象) {
+    // 需要同步的代码
+}
+```
+
+和	非静态同步方法的锁要求	一致
 
 
 
 
 
+关键是锁对象，除了静态的锁是固定的，其它都可以指定谁作为锁
 
 
 
 
 
+### 死锁
+
+![image-20250729115522490](D:\01\技术\感获\md文档\JavaSE.assets\image-20250729115522490.png)
+
+多个线程各自持有一定资源，接下里必须获取彼此手中资源才能释放自己手中资源，结果就是谁都没法释放
 
 
 
+**释放锁的情况**
 
+同步代码块正常结束
 
+break,return终止
 
+出现未处理异常，异常结束
 
+执行wait()
 
+**不会释放锁的情况**	
 
+![image-20250729120429574](D:\01\技术\感获\md文档\JavaSE.assets\image-20250729120429574.png)****
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+![image-20250729120435988](D:\01\技术\感获\md文档\JavaSE.assets\image-20250729120435988.png)
 
 
 
