@@ -1,8 +1,16 @@
+2025年8月8日
+
+​	以下内容只是初学，连熟练使用都还没达到，更别说深入理解底层运作了
+
+
+
+
+
 361
 
 520
 
-aaa集合类的底层源码那些我都没好好听aaa
+集合类的底层源码那些我都没好好听aaa
 
 
 
@@ -3918,7 +3926,9 @@ public void create01(){
 
 
 
+## 基本认识
 
+流分类
 
 ![image-20250801111539976](D:\01\技术\感获\md文档\JavaSE.assets\image-20250801111539976.png)
 
@@ -3952,11 +3962,512 @@ new后的true是以追加方式写
 
 
 
-​	
+关闭时处理流，只关闭外层流就行，它会自动关闭内层流
 
 
 
-​	 
+## 字节流
+
+音频、图片属于二进制文件，用流操作
+
+![image-20250808090332145](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808090332145.png)
+
+
+
+## 字符流
+
+字符流需要手动刷新，否则数据不会写入数据通道
+
+.flush()		
+
+为什么要手动刷新？
+
+因为如果使用缓冲区，缓冲区不满不会自动刷新，而如果数据刚好剩余部分不满缓冲区，就需要手动刷新，否则内容就一直停留在内存中，残缺了
+
+还有就是可能不需要填满缓冲区就得刷新（网络聊天）
+
+还有，存在程序崩溃内容丢失情况
+
+所以，手动刷新不是多余，而是和自动刷新的互补
+
+
+
+
+
+## 对象流
+
+100可以是 int、String、Cat等不同类型，为明确100到底是什么，用对象流存储
+
+就是除了保存值，还保留类型
+
+涉及对象流，就涉及 序列化、反序列化
+
+![image-20250808095330883](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808095330883.png)
+
+标记接口：没有任何方法的接口
+
+
+
+继承关系图
+
+![image-20250808095728340](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808095728340.png)
+
+![image-20250808095739353](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808095739353.png)
+
+ 
+
+实现了序列化的官方类
+
+![image-20250808100303408](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808100303408.png)
+
+（不确定是否只有这些）
+
+
+
+序列化会输出.dat后缀的文件
+
+类反序列化后，如果想使用该类方法，需要向下转型，毕竟接收过来的是Object类型
+
+```java
+Object dog = ois.readObject();
+Dog dog2 = (Dog)dog;
+```
+
+引用类需要注意类的范围，放到可引用位置
+
+
+
+![image-20250808101848295](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808101848295.png) 
+
+static或transient修饰成员虽然会被保存至dat文件，但是值为null
+
+
+
+![image-20250808102136020](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808102136020.png)
+
+这个UID作用是：如果Dog有变化，比如新增属性，序列化会认为只是Dog只是进行了更新而不是新增属性就作为1个全新类
+
+
+
+## 标准输入输出
+
+![image-20250808102841168](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808102841168.png)
+
+System.in
+
+![image-20250808102916673](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808102916673.png)
+
+
+
+System.out
+
+![image-20250808103040155](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808103040155.png)
+
+
+
+
+
+## 流转换
+
+流转换 实现 字节流转为字符流，严格来说是种方法流，所以没流分类里没有它	
+
+| InputStreamReader | OutputStreamWriter |
+| ----------------- | ------------------ |
+
+需要流转换，准确的说是  字符流 需要 字节流的指定编码功能
+
+如果编码方式不同，字符流操作有乱码，指定编码方式就能解决问题，但是字符流没有这个功能，但是字节流有，所以实现流转换
+
+<img src="D:\01\技术\感获\md文档\JavaSE.assets\image-20250808104145801.png" alt="image-20250808104145801" style="zoom:50%;" />
+
+```java
+//应用
+BudderedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath, "utf-8")));
+```
+
+
+
+## 打印流
+
+打印流只有输出流
+
+| PrintStream | PrintWriter |
+| ----------- | ----------- |
+
+默认输出到显示器，但可以修改位置
+
+```java
+.setOut(new PrintStream("D:\\"));
+```
+
+![image-20250808105240556](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808105240556.png)
+
+![image-20250808105407461](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808105407461.png)
+
+close（）关闭流，才会将数据写入到文件（会执行刷新，然后写入文件）
+
+
+
+## Properties类
+
+配置文件类
+
+
+
+数据尽量不要写入程序，而是给数据库或配置文件管理，修改它们，而非程序
+
+.properties文件
+
+```java
+格式
+键=值
+
+默认String
+值不需要“”
+```
+
+![image-20250808105903947](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808105903947.png)
+
+
+
+
+
+![image-20250808110105514](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808110105514.png)
+
+![image-20250808110537095](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808110537095.png)
+
+
+
+# 网络编程
+
+
+
+网络编程中，数据组织形式就是协议
+
+网络协议就像语言，不用同样语言就无法理解对方内容，需要按照规定好的协议方式
+
+TCP/IP是最基本的协议，就像英语
+
+、
+
+java.net包
+
+## 一些方法
+
+![image-20250808175656192](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808175656192.png)
+
+![image-20250808175708021](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808175708021.png)
+
+
+
+## Socket 套接字
+
+把网络连接当作流，通过IO流处理	(因为广泛使用，是事实上的标准)
+
+
+
+## TCP网络通信编程
+
+- 基于 客户端-服务器 网络编程
+- 底层使用TCP/IP 通信协议
+
+<img src="D:\01\技术\感获\md文档\JavaSE.assets\image-20250808180410135.png" alt="image-20250808180410135" style="zoom:50%;" />
+
+客户机服务器均在同一机器，接受1次服务后结束
+
+先启动服务器
+
+```java
+// 服务器
+package com.net;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.*;
+
+public class Service{
+
+    public static void main(String[] args)  throws IOException {
+
+
+        ServerSocket server = new ServerSocket(8123);
+        System.out.println("服务启动，端口9999监听");
+
+        // 没有客户端连接9999端口，程序阻塞，否则返回Socket对象
+        // 可通过accept返回多个Socket[多客户端连接服务器并发]
+        Socket socket = server.accept();
+        System.out.println("接受"+ socket.getClass() +"的服务");
+
+        // IO读取客户端写入的数据
+        InputStream is = socket.getInputStream();
+        byte[] buffer = new byte[1024];
+        int len = 0;
+        while((len = is.read(buffer)) != -1){
+            System.out.println(new String(buffer, 0, len));
+        }
+        // 告知客户机接收完毕
+        socket.shutdownInput();
+
+        // 收尾
+        is.close();
+        socket.close();
+        server.close();
+    }
+}
+
+```
+
+```java
+// 客户机
+
+package com.net;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+
+public class Client {
+
+    public static void main(String[] args) throws IOException {
+
+        // 指定ip 向 指定端口  发送请求
+        Socket client = new Socket(InetAddress.getLocalHost(), 8123);
+
+        // 向服务器发送数据
+        OutputStream out = client.getOutputStream();
+        out.write("Hello Wrold".getBytes());
+        // 告知服务器发送完毕
+        client.shutdownOutput();
+
+        // 收尾
+        out.close();
+        client.close();
+    }
+
+}
+
+```
+
+![image-20250808192852037](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808192852037.png)
+
+
+
+![image-20250808193653525](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808193653525.png)
+
+
+
+
+
+
+
+
+
+## UDP网络编程
+
+| DatagramSocket 数据包 | DatagramPacket 数据报 |
+| --------------------- | --------------------- |
+
+实现了基于UDP协议网络程序
+
+![image-20250808202636993](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808202636993.png)
+
+![image-20250808202853585](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808202853585.png)
+
+不保证能否送到，也不保证什么时候能送到
+
+**流程**
+
+![image-20250808203044082](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808203044082.png)
+
+
+
+```java
+//UDPReceive
+
+package com.net;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+
+public class UDPReceive {
+
+    public static void main(String[] args) throws IOException {
+
+        // DatagramSocket对象在指定端口接收数据包
+        DatagramSocket socket = new DatagramSocket(9999);
+
+        byte[] buf = new byte[1024];
+        // 创建DatagramPacket对象，设置大小
+        // UDP协议数据包最大64k
+        DatagramPacket packet = new DatagramPacket(buf, buf.length);
+        // 使用方法，填充数据包到packet
+        socket.receive(packet);
+
+        int length = packet.getLength();
+        byte[] data = packet.getData();
+        String s = new String(data, 0, length);
+        System.out.println(s);
+
+        socket.close();
+
+    }
+}
+```
+
+```java
+// UDPSender
+
+package com.net;
+
+import java.io.IOException;
+import java.net.*;
+
+public class UDPSender {
+    public static void main(String[] args) throws IOException {
+
+        DatagramSocket socket = new DatagramSocket(9998);
+
+        byte[] data = "dsadsada".getBytes();
+        DatagramPacket packet =
+                new DatagramPacket(data, data.length, InetAddress.getByName("192.168.12.1"), 9999);
+        socket.send(packet);
+
+        socket.close();
+
+    }
+}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
