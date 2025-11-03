@@ -1,16 +1,14 @@
+# 待解决
+
 2025年8月8日
 
 ​	以下内容只是初学，连熟练使用都还没达到，更别说深入理解底层运作了
 
 
 
-aaa
 
-361
 
-520
-
-集合类的底层源码那些我都没好好听aaa
+集合类的底层源码那些我都没好好听
 
 
 
@@ -345,6 +343,10 @@ System.out.println(i);
 
 ## 数组
 
+存储固定大小的同类型元素
+
+
+
 数组有动态初始化和静态初始化
 
 静态初始化，长度固定，不可伸缩扩展
@@ -421,6 +423,18 @@ System.out.println(x);
 因此，数组对象的起始地址（哈希码对应的地址）是**对象头的起始地址**，而首元素地址是对象头 + 长度字段后的偏移量（通常为 16 字节后）。
 
 Java 刻意隐藏内存地址细节，开发者无需关心物理地址，只需通过引用操作数组。
+
+
+
+
+
+**Arrays**
+
+java.util.Arrays 类能方便地操作数组，它提供的所有方法都是静态的
+
+主要功能
+
+<img src="D:\01\技术\感获\md文档\JavaSE.assets\image-20251011111700660.png" alt="image-20251011111700660" style="zoom:50%;" />
 
 
 
@@ -830,6 +844,10 @@ public class Main {
 
 }
 ```
+
+
+
+继承父类的东西，在某些方面也受父类限制
 
 
 
@@ -1502,6 +1520,10 @@ Integer.valueOf(int)源码👇
 
 
 
+
+
+
+
 ### String类
 
 字符串是数据一种表现形式
@@ -1598,6 +1620,8 @@ new
 
 
 
+
+
 ### StringBuffer
 
 内容可变，相较于String修改地址，效率高
@@ -1606,13 +1630,37 @@ new
 
 适合多线程
 
+
+
+支持的主要方法
+
+<img src="D:\01\技术\感获\md文档\JavaSE.assets\image-20251011111447256.png" alt="image-20251011111447256" style="zoom:50%;" />
+
+
+
 ### StringBuilder
 
 适合单线程，因为不是线程安全的
 
 
 
+StringBuffer 和 StringBuilder 类的对象能够被多次的修改，并且不产生新的未使用对象
+
+
+
+由于 StringBuilder 相较于 StringBuffer 有速度优势，所以多数情况下建议使用 StringBuilder 类。然而在应用程序要求线程安全的情况下，则必须使用 StringBuffer 类
+
+
+
+
+
+
+
 ### 常用类
+
+
+
+#### Arrays类
 
 ![image-20250708105648603](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708105648603.png)
 
@@ -1643,13 +1691,15 @@ Collections.sort(personList, new Comparator<Person>() {
 
 
 
-System类常用方法
+#### System类常用方法
 
 ![image-20250708111003932](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708111003932.png)
 
 Arrays的copy方法底层用的就是System
 
 
+
+#### 大数据类
 
 ![image-20250708112020860](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708112020860.png)
 
@@ -1661,11 +1711,84 @@ Arrays的copy方法底层用的就是System
 
 
 
-Date
+#### 日期类
 
-第一代日期类，搭配SimpleDateFormat，实现指定日期格式，字符串日期互转
+**Date**
 
-Calendar
+第一代日期类，有2个构造函数来实例化Date对象
+
+```java
+Date()		// 默认当前时间
+
+Date(long millisec)	//从1970⁢年1月1日起的毫秒数
+    
+    
+默认格式	Sat Oct 11 11:24:21 CST 2025
+```
+
+
+
+![image-20251011112619701](D:\01\技术\感获\md文档\JavaSE.assets\image-20251011112619701.png)
+
+
+
+
+
+#### 日期比较
+
+![image-20251011112650878](D:\01\技术\感获\md文档\JavaSE.assets\image-20251011112650878.png)
+
+
+
+Date类 搭配SimpleDateFormat，实现指定日期格式，字符串日期互转
+
+```java
+public static void main(String[] args) {
+    System.out.println(formatTime());
+
+}
+
+public static String formatTime(){
+    Date date = new Date();
+    SimpleDateFormat sdf = new SimpleDateFormat("YY-MM-dd HH:mm:ss");
+    return sdf.format(date);	//结果会自动转为字符串
+}
+```
+
+
+
+#### 简单的DateFormat格式化编码
+
+时间模式字؜符串用来指定时间格﻿式。在此模式中，所⁢有的ASCII字母‏被保留为模式字母，‍定义如下：
+
+| **字母**ltCXNgjIjS9PvBlu5RcQQVgP0vlt2P7fP0ZcHunNClE= | **描述**sR8DmsC5gV+RLBS0WZXZa1BaIfSLRjH5Kq235i03dh8= | **示例**ltCXNgjIjS9PvBlu5RcQQVgP0vlt2P7fP0ZcHunNClE=aC5zdeWLpULKjkbRg1/IA25mHAXY3bvuBuCjDHl+xgY= |
+| ---------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------ |
+| G                                                    | 纪元标记                                             | ADcwoPe9F/9wvnLsRjynZZD3uxvFr9gG91jf/GyUxWges=               |
+| y                                                    | 四位年份                                             | 2001ltCXNgjIjS9PvBlu5RcQQVgP0vlt2P7fP0ZcHunNClE=             |
+| M                                                    | 月份                                                 | July or 07cwoPe9F/9wvnLsRjynZZD3uxvFr9gG91jf/GyUxWges=       |
+| d                                                    | 一个月的日期                                         | 10tjfxDc4Sy1McoCy2fWQC9Ixi0kgH7MplsL6IiEXVREE=               |
+| h                                                    | A.M./P.M. (1~12)格式小时                             | 12aC5zdeWLpULKjkbRg1/IA25mHAXY3bvuBuCjDHl+xgY=               |
+| H                                                    | 一天中的小时 (0~23)                                  | 22mRGelFRxTB7VTe2K9XB/KaI7V98pVhdVKB5ch1QjBfw=               |
+| m                                                    | 分钟数                                               | 30aC5zdeWLpULKjkbRg1/IA25mHAXY3bvuBuCjDHl+xgY=               |
+| s                                                    | 秒数                                                 | 55VzTa2Q9DeMNKPxM+sv20rJV6t0ffQXDyFtspboXOLig=               |
+| S                                                    | 毫秒数                                               | 234ltCXNgjIjS9PvBlu5RcQQVgP0vlt2P7fP0ZcHunNClE=              |
+| E                                                    | 星期几                                               | TuesdaymRGelFRxTB7VTe2K9XB/KaI7V98pVhdVKB5ch1QjBfw=          |
+| D                                                    | 一年中的日子                                         | 360ltCXNgjIjS9PvBlu5RcQQVgP0vlt2P7fP0ZcHunNClE=              |
+| F                                                    | 一个月中第几周的周几                                 | 2 (second Wed. in July)tixvTheYGXxejp+louUqtnhSzCkcqYGh80mlhbQvU6Q= |
+| w                                                    | 一年中第几周                                         | 40mRGelFRxTB7VTe2K9XB/KaI7V98pVhdVKB5ch1QjBfw=               |
+| W                                                    | 一个月中第几周                                       | 1mRGelFRxTB7VTe2K9XB/KaI7V98pVhdVKB5ch1QjBfw=                |
+| a                                                    | A.M./P.M. 标记                                       | PMVzTa2Q9DeMNKPxM+sv20rJV6t0ffQXDyFtspboXOLig=               |
+| k                                                    | 一天中的小时(1~24)                                   | 24sR8DmsC5gV+RLBS0WZXZa1BaIfSLRjH5Kq235i03dh8=               |
+| K                                                    | A.M./P.M. (0~11)格式小时                             | 10VzTa2Q9DeMNKPxM+sv20rJV6t0ffQXDyFtspboXOLig=               |
+| z                                                    | 时区                                                 | Eastern Standard TimetixvTheYGXxejp+louUqtnhSzCkcqYGh80mlhbQvU6Q= |
+| '                                                    | 文字定界符                                           | DelimitertixvTheYGXxejp+louUqtnhSzCkcqYGh80mlhbQvU6Q=        |
+| "                                                    | 单引号                                               | `                                                            |
+
+
+
+
+
+**Calendar**
 
 第二代
 
@@ -2403,7 +2526,7 @@ public class Main {
 
 线程不安全，基本等同Vector，可存储null（允许多个）
 
-
+ 	
 
 底层
 
@@ -2437,7 +2560,7 @@ transient表示属性不会被序列化
 
 
 
-
+还可以发现底层的数组扩容都是通过复制实现的（copyof）
 
 
 
@@ -2447,6 +2570,26 @@ transient表示属性不会被序列化
 
 ![image-20250708143247412](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708143247412.png)
 
+​	
+
+add操作的底层源码![image-20251014093944360](D:\01\技术\感获\md文档\JavaSE.assets\image-20251014093944360.png)l存储e(当前节点)的prev，若l为null，则判断为头节点
+
+
+
+remove（）源码
+
+![image-20251014124554461](D:\01\技术\感获\md文档\JavaSE.assets\image-20251014124554461.png)
+
+<img src="D:\01\技术\感获\md文档\JavaSE.assets\image-20251014124603984.png" alt="image-20251014124603984" style="zoom:50%;" />
+
+<img src="D:\01\技术\感获\md文档\JavaSE.assets\image-20251014124625026.png" alt="image-20251014124625026" style="zoom:50%;" />
+
+其实就是双向链表删除过程
+
+
+
+
+
 
 
 ## Set
@@ -2454,6 +2597,10 @@ transient表示属性不会被序列化
 无序、不允许重复、不支持索引
 
 最多1个null
+
+
+
+Set是抽象类型，需要具体实现
 
 
 
@@ -2475,11 +2622,122 @@ set确定元素是否重复的机制是：
 
 ### HashSet
 
-底层是	数组+链表+红黑树
+底层是	HashMap 并使用 数组+链表+红黑树
 
 
 
 ![image-20250708150108497](D:\01\技术\感获\md文档\JavaSE.assets\image-20250708150108497.png)
+
+
+
+源码
+
+首先创建HahsMap
+
+![image-20251014125749133](D:\01\技术\感获\md文档\JavaSE.assets\image-20251014125749133.png)
+
+进行add操作
+
+HashSet的add操作就是把元素放入内置的HashMap中
+
+PRESENT起到占位作用，<img src="D:\01\技术\感获\md文档\JavaSE.assets\image-20251014130206418.png" alt="image-20251014130206418" style="zoom:50%;" />，作为 HashMap 中**所有 Key（即 HashSet 元素）对应的 Value**，实现 “用 HashMap 存储 HashSet 元素” 的逻辑，它是唯一共享的，省内存
+
+![image-20251014125841210](D:\01\技术\感获\md文档\JavaSE.assets\image-20251014125841210.png)
+
+执行map的put（k，v）方法，put方法执行putVal（）方法并返回
+
+这个putVal就需要 散列码（通过图中方法计算key对应散列码）、键、值、两个判定
+
+![image-20251014125925309](D:\01\技术\感获\md文档\JavaSE.assets\image-20251014125925309.png)
+
+```java
+final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
+               boolean evict) {
+    Node<K,V>[] tab; Node<K,V> p; int n, i;	//辅助性代码，Node是HashMap一个数组
+    if ((tab = table) == null || (n = tab.length) == 0)
+        n = (tab = resize()).length;//如果数组没元素，通过resize（）开辟空间
+//这个resize会判断元素情况（><0等），然后获取对应初始大小（比如一开始没有，就1<<4，扩容16倍），resize()除了扩容，还会计算扩容因子，确定是否要扩容（比如元素16，用来12个了，这时候会进行扩容，避免突然加入大量元素导致阻塞）
+    
+    //通过散列码，计算元素应该放在哪个位置
+    if ((p = tab[i = (n - 1) & hash]) == null)	//为空，有空，直接放这儿
+        tab[i] = newNode(hash, key, value, null);
+    else {	//	没空，通过equals进行判断，是否为重复元素
+        Node<K,V> e; K k;
+        //当前链表首元素（注意，首元素）hash=要加入元素hash，或者二者key equals后相同
+        if (p.hash == hash &&
+            ((k = p.key) == key || (key != null && key.equals(k))))
+            e = p;	//不能加入，赋予非空值（为什么赋予非空值，看底下返回值）
+        //允许加入，先判断是否为红黑树，是，按照红黑树方式添加
+        else if (p instanceof TreeNode)
+            e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
+        //否则，就说明加入位置已经是一个链表了，用for循环依次比较（一开始只是比较首元素，还要比较后后续节点）
+        else {
+            for (int binCount = 0; ; ++binCount) {
+                //无重复，加入
+                if ((e = p.next) == null) {
+                    p.next = newNode(hash, key, value, null);
+                    //如果这条链表达到8个元素，进行红黑树化
+                    if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
+                        treeifyBin(tab, hash);
+                    break;
+                }
+                //有重复，赋予非空值，不加入
+                if (e.hash == hash &&
+                    ((k = e.key) == key || (key != null && key.equals(k))))
+                    break;
+                p = e;
+            }
+        }
+        if (e != null) { // existing mapping for key
+            V oldValue = e.value;
+            if (!onlyIfAbsent || oldValue == null)
+                e.value = value;	//触发阈值，扩容
+            afterNodeAccess(e);
+            return oldValue;
+        }
+    }
+    ++modCount;
+    if (++size > threshold)
+        resize();
+    afterNodeInsertion(evict);
+    return null;	//返回null说明添加成功，否则说明添加的东西存在，报错
+}
+```
+
+```java
+//上文中红黑树化内容
+final void treeifyBin(Node<K,V>[] tab, int hash) {
+    int n, index; Node<K,V> e;
+    //该链表达到8个元素，但表空间大小还没到达64个，只是进行扩容（resize）
+    //		！！！树化是对该链表树化，扩容是对整个表扩容！！！
+    if (tab == null || (n = tab.length) < MIN_TREEIFY_CAPACITY)
+        resize();
+    //满足以上2个条件，真正开始树化
+    else if ((e = tab[index = (n - 1) & hash]) != null) {
+        TreeNode<K,V> hd = null, tl = null;
+        do {
+            TreeNode<K,V> p = replacementTreeNode(e, null);
+            if (tl == null)
+                hd = p;
+            else {
+                p.prev = tl;
+                tl.next = p;
+            }
+            tl = p;
+        } while ((e = e.next) != null);
+        if ((tab[index] = hd) != null)
+            hd.treeify(tab);
+    }
+}
+
+这是 HashMap 为了平衡性能开销的优化：
+当数组容量较小时（比如 16），哈希冲突可能是因为 “容量不足” 导致的（元素集中在少数桶中）。此时扩容（比如从 16→32→64）能让元素重新哈希后更均匀地分布在数组中，原本过长的链表会被 “打散”，长度可能自然缩短（无需树化）。
+只有当数组容量足够大（≥64）时，某个链表仍过长，才说明是 “元素本身的哈希冲突”（而非容量问题），此时树化（从链表→红黑树）才能真正优化查询效率（避免链表查询的 O(n) 复杂度）。
+```
+
+
+
+
 
 
 
@@ -2489,9 +2747,21 @@ set确定元素是否重复的机制是：
 
  <img src="D:\01\技术\感获\md文档\JavaSE.assets\image-20250709084313969.png" alt="image-20250709084313969" style="zoom:50%;" />
 
+`linkedHashMap` 是 `HashMap` 的子类，HashMap存放Node类
+
  ![image-20250709084245594](D:\01\技术\感获\md文档\JavaSE.assets\image-20250709084245594.png)
 
-`nkedHashMap` 是 `HashMap` 的子类，`LinkedHashMap` 内部的 `Entry` 其实是继承自 `HashMap.Node` 并做了扩展
+`LinkedHashMap` 存放的 `Entry` 其实是继承自 `HashMap.Node` 并做了扩展，是Node的子类
+
+
+
+![image-20251014143504006](D:\01\技术\感获\md文档\JavaSE.assets\image-20251014143504006.png)
+
+这就保证了Entry只有内部能用
+
+
+
+add源码和HashSet一样
 
 
 
@@ -4140,19 +4410,17 @@ close（）关闭流，才会将数据写入到文件（会执行刷新，然后
 
 # 网络编程
 
-
-
-网络编程中，数据组织形式就是协议
+网络编程中，数据组织形式就是网络协议
 
 网络协议就像语言，不用同样语言就无法理解对方内容，需要按照规定好的协议方式
 
-TCP/IP是最基本的协议，就像英语
+TCP/IP是最基本的协议
 
-、
+
 
 java.net包
 
-## 一些方法
+## 一些方法（获取信息）
 
 ![image-20250808175656192](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808175656192.png)
 
@@ -4205,7 +4473,7 @@ public class Service{
         while((len = is.read(buffer)) != -1){
             System.out.println(new String(buffer, 0, len));
         }
-        // 告知客户机接收完毕
+        // 告知客户机接收完毕，没有这个双方以为还没结束，就会卡在这里
         socket.shutdownInput();
 
         // 收尾
@@ -4249,15 +4517,33 @@ public class Client {
 
 ```
 
+
+
+以上使用的字节流，如果用字符流
+
+![image-20251014151755574](D:\01\技术\感获\md文档\JavaSE.assets\image-20251014151755574.png)
+
+![image-20251014151844220](D:\01\技术\感获\md文档\JavaSE.assets\image-20251014151844220.png)
+
+
+
+
+
+
+
 ![image-20250808192852037](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808192852037.png)
-
-
 
 ![image-20250808193653525](D:\01\技术\感获\md文档\JavaSE.assets\image-20250808193653525.png)
 
 
 
 
+
+图片传输
+
+```
+
+```
 
 
 
@@ -4345,6 +4631,7 @@ public class UDPSender {
 
 
 
+## TCP文件传输
 
 
 
@@ -4354,107 +4641,241 @@ public class UDPSender {
 
 
 
+# 反射机制
 
+## 介绍
 
+通过修改配置文件，不修改源码，运行程序
 
 
 
+以properties配置文件为例
 
+properties以键值对存储，#注释，注释独占1行，默认 ISO-8859-1编码格式	
 
+```properties
+# 图片传输服务器配置
+server.ip=localhost
+server.port=8888
+# 服务器接收图片的保存路径
+image.save.path=/mnt/received-images/
+# 传输缓冲区大小（1024字节）
+transfer.buffer.size=1024
+```
 
 
 
+**根据项目类型（普通 Java 项目 / Spring 项目），读取方式不同**
 
+```java
+//常规
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
+public class ConfigReader {
+    public static void main(String[] args) {
+        // 1. 创建 Properties 对象
+        Properties props = new Properties();
+        
+        try {
+            // 2. 加载 properties 文件（路径需正确，此处以“项目根目录下”为例）
+            props.load(new FileInputStream("image-transfer.properties"));
+            
+            // 3. 读取配置值（key 需与文件中完全一致，可加默认值避免空指针）
+            String serverIp = props.getProperty("server.ip");
+            int serverPort = Integer.parseInt(props.getProperty("server.port")); // 需转成对应类型
+            String imageSavePath = props.getProperty("image.save.path");
+            int bufferSize = Integer.parseInt(props.getProperty("transfer.buffer.size", "1024")); // 默认值1024
+            
+            // 4. 打印配置（实际项目中可直接用这些值初始化服务）
+            System.out.println("服务器IP：" + serverIp);
+            System.out.println("服务器端口：" + serverPort);
+            System.out.println("图片保存路径：" + imageSavePath);
+            System.out.println("缓冲区大小：" + bufferSize);
+            
+        } catch (IOException e) {
+            System.out.println("读取配置文件失败：" + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println("配置值类型转换错误（如端口不是数字）：" + e.getMessage());
+        }
+    }
+}
+```
 
+```java
+// 常规项目，如果 properties 文件放在 src/main/resources 目录下（Maven/Gradle 项目标准结构），需用「类路径加载」，替换第 2 步
 
+// 类路径加载（无需写全路径，直接写文件名）
+props.load(ConfigReader.class.getClassLoader().getResourceAsStream("image-transfer.properties"));
+```
 
 
 
+Spring使用properties方式暂时不写
 
 
 
 
 
+![image-20251014155155846](D:\01\技术\感获\md文档\JavaSE.assets\image-20251014155155846.png)
 
 
 
 
 
+![image-20251014160207440](D:\01\技术\感获\md文档\JavaSE.assets\image-20251014160207440.png)
 
+以前是用类的东西操作对象，现在是用对象的东西操作类，又由于类具有继承实现等特性，所以可操作性大大增加
 
 
 
+![image-20251014160653494](D:\01\技术\感获\md文档\JavaSE.assets\image-20251014160653494.png)
 
+![image-20251014161415566](D:\01\技术\感获\md文档\JavaSE.assets\image-20251014161415566.png)
 
 
 
+有了反射，可以动态创建对象，缺点是反射基本是解释执行，效率低
 
 
 
 
 
+## Class类
 
+![image-20251014162151094](D:\01\技术\感获\md文档\JavaSE.assets\image-20251014162151094.png)
 
+![image-20251014170524457](D:\01\技术\感获\md文档\JavaSE.assets\image-20251014170524457.png)
 
 
 
 
 
+Class6种获取方式
 
+![image-20251014171009676](D:\01\技术\感获\md文档\JavaSE.assets\image-20251014171009676.png)
 
+编译阶段，转换为字节码文件
 
+运行阶段，类加载器加载文件，类对象生成在堆区，方法在方法区
 
 
 
 
 
+```java
+String classAllPath = "\\dsa\\xcz\\xzc";
+Class cls = Class.forName(classAllPath);
 
+Class cls2 = Animal.class;
 
+Animal an = new Animal();
+Class cls3 = an.getClass();	
 
+类加载器（4种）
+ClassLoader cloader = an.getClass().getClassLoader();
+Class cls4 = cloader.loadClass(classAllPath);
 
+Class cls5 = 基本数据类型.class 
+Class cls6 = 包装类.TYPE
+```
 
 
 
 
 
+### 获取类结构信息
 
+![image-20251016084823159](D:\01\技术\感获\md文档\JavaSE.assets\image-20251016084823159.png)
 
+getFields()获取内容包括父类的；只能获取公开的
 
+getDeclaredFields()只获取本类属性，包括私有的
 
+![image-20251016090709885](D:\01\技术\感获\md文档\JavaSE.assets\image-20251016090709885.png)
 
 
 
 
 
+### 反射爆破
 
+不管通过反射获取什么私有内容，都需要爆破
 
 
 
+#### 创建实例
 
+通过反射获取构造器，通过构造器（默认、无参、有参）（对于有参构造器、公开、私有）（getConstructor、getDeclaredConstructor（可获取私有构造器，不过要使用需要先爆破，否则报错））
 
+```java
 
+public static void main(String[] args) throws Exception {
+    Class<?> clsA = Class.forName("One$A");
 
+    Constructor<?> cOne = clsA.getConstructor();
+    Object o = cOne.newInstance();
 
+    Constructor<?> cTwo = clsA.getConstructor(int.class);
+    Object o2 = cTwo.newInstance(12);
 
+    Constructor<?> cThree = clsA.getDeclaredConstructor(String.class);
+    cThree.setAccessible(true);
+    Object o3 = cThree.newInstance("Hello");
 
 
+}
 
+static class A {
+    String name;
+    int age;
 
+    public A() {
 
+    }
 
+    public A(int age) {
+        this.age = age;
+    }
 
+    private A(String name) {
+        this.name = name;
+    }
 
+}
+```
 
 
 
+#### 修改属性
 
+```java
+public static void main(String[] args) throws Exception {
+    Class<?> cls = Class.forName("One$A");
+    Object o = cls.newInstance();
+    Field name = cls.getDeclaredField("name");
+    name.setAccessible(true);
+    name.set(o, "asdsad");
+    System.out.println(name.get(null));	//如果属性是static，那修改对象可以填为null
+    System.out.println(name.get(o));
+}
 
+static class A {
+    static String name;
+    static int age;
 
+    public A() {
+    }
+    
+}
+```
 
 
 
+#### 方法
 
+![image-20251016094835878](D:\01\技术\感获\md文档\JavaSE.assets\image-20251016094835878.png)
 
 
 
@@ -4464,22 +4885,425 @@ public class UDPSender {
 
 
 
+### 哪些类型有Class对象
 
+![image-20251014172202652](D:\01\技术\感获\md文档\JavaSE.assets\image-20251014172202652.png)
 
+图里这些，用类解释就是它们都是对应一种类，Class也是类，但应该看作抽象的东西，如果前者是苹果香蕉之类的水果，那它就是一种叫水果的水果
 
 
 
 
 
+## 类加载过程
 
+类加载器将类的字节码文件加载到堆中生成的对象,同时在方法区生成类字节码的二进制文件
 
+![image-20251014172516160](D:\01\技术\感获\md文档\JavaSE.assets\image-20251014172516160.png)
 
+```java
+new Person();
+new Son();	//子类
+调用类中静态成员
+//之前一直用这些，这是静态加载，如果没有编写Person类，那么编译器就会报错
 
+Class cls = Class.forName("Person");
+Object obj = cls.newInstance();	/*这种动态加载在编译阶段不会报错，只有在运行阶段真的要实例化时发现没有对应类，才会报错*/
+```
 
+<img src="D:\01\技术\感获\md文档\JavaSE.assets\image-20251015090128493.png" alt="image-20251015090128493" style="zoom:50%;" />静态加载有很强的依赖性
 
 
 
 
+
+![image-20251015091650324](D:\01\技术\感获\md文档\JavaSE.assets\image-20251015091650324.png)
+
+
+
+### 类加载
+
+JVM在类加载阶段会把来自不同数据源（jar包、class文件、网络）的字节码转为二进制文件存入内存，并生成1个代表该类的java.lang.Class对象
+
+
+
+**验证**：验证数据文件是否完整，名称符合标准
+
+![image-20251016082125700](D:\01\技术\感获\md文档\JavaSE.assets\image-20251016082125700.png)
+
+**准备**：对静态变量进行默认初始化（后面的初始化是程序员操作的初始化，不一样，比如把x类x属性赋x值）
+
+![image-20251016082218224](D:\01\技术\感获\md文档\JavaSE.assets\image-20251016082218224.png)
+
+这3种变量赋值机制是不一样的<img src="D:\01\技术\感获\md文档\JavaSE.assets\image-20251016082402345.png" alt="image-20251016082402345" style="zoom:50%;" />
+
+
+
+**解析**：JVM把常量池的中常量的符号引用转为直接引用
+
+类在未加载进内存期间用符号常量代替它，加载后再进行替换
+
+
+
+**初始化阶段**
+
+以下代码为例
+
+```java
+public static void main(String[] args) {
+    System.out.println(B.num);
+}
+
+static class B {
+    static {
+        System.out.println("B静态代码块执行");
+        num = 300;
+    }
+
+    static int num = 100;
+}
+
+/*
+	加载B类，生成B的class对象
+	链接num = 0
+	初始化阶段：
+		收集静态代码块语句和静态变量（按照代码书写顺序）
+	clinit(){
+		System.out.ptintln("B静态代码块执行");
+        num = 300;
+		num = 100;
+    }
+*/
+```
+
+
+
+![image-20251016083704384](D:\01\技术\感获\md文档\JavaSE.assets\image-20251016083704384.png)
+
+保证了多线程情况下，只有1个Class对象
+
+
+
+
+
+
+
+# JDBC
+
+JDBC是访问各种数据库的统一接口，这样用java也能操作数据库。需要数据库有JDBC驱动(就是类，jar包)
+
+
+
+主要是为了规范统一，方便，这也说明java程序直接和数据库沟通肯定也行，但这样只是专用的，不具通用性，不符合现实情况
+
+
+
+数据库很多，这里以SQL为例
+
+SQL JDBC在java.sql和javax.sql两个包
+
+| 概念     | 本质              | 与其他概念的关系                                             |
+| -------- | ----------------- | ------------------------------------------------------------ |
+| jar 包   | 归档文件格式      | `java`和`javax`包下的类，最终会被打包成 jar 包（如 JDK 的`rt.jar`包含`java`核心类）。 |
+| java 包  | 核心 API 命名空间 | 是 Java 的基础，类通常打包在 JDK 自带的 jar 中（如`rt.jar`）。 |
+| javax 包 | 扩展 API 命名空间 | 是核心的补充，类可能在 JDK 自带 jar 中，或第三方 jar 中（如`servlet-api.jar`）。 |
+
+
+
+流程：
+
+1. 添加jar包
+2. 注册驱动，加载Driver类
+3. 获取链接，得到Connection
+4. 执行操作
+5. 释放资源，关闭链接
+
+
+
+
+
+```java
+public static int fun() throws SQLException {
+    Driver driver = new com.mysql.jdbc.Driver();
+
+    String url = "jdbc:mysql://localhost:3306/actor";
+    Properties properties = new Properties();
+    properties.setProperty("user", "root");
+    properties.setProperty("password", "asdAsdlkj978000*");
+    Connection conn = driver.connect(url, properties);
+
+    //只能执行静态语句
+    String sql = "insert into actor values(null, 'XinSan', '男', '1111-11-11', '119')";
+    // int resRows = conn.createStatement().executeUpdate(sql);
+    Statement statement = conn.createStatement();
+    //返回影响的行数
+    int resRows = statement.executeUpdate(sql);
+
+    System.out.println(resRows > 0 ? "成了" : "败了");
+
+    // 如果没有及时释放资源，当链接dbms的程序过多，就无法再链接了
+    statement.close();
+    conn.close();
+
+    return resRows;
+}
+```
+
+
+
+property	属性
+
+execute	执行
+
+
+
+## 数据库连接方式有5种，以上是一种
+
+*2使用反射机制
+
+![image-20251023102751513](D:\01\技术\感获\md文档\JavaSE.assets\image-20251023102751513.png)
+
+
+
+*3使用反射机制，同时使用DriverManager管理
+
+![image-20251023102016293](D:\01\技术\感获\md文档\JavaSE.assets\image-20251023102016293.png)
+
+4（23结合）
+
+使用反射，其实底层实现了对驱动的注册，所以4相较于3少了注册环节![image-20251023102930192](D:\01\技术\感获\md文档\JavaSE.assets\image-20251023102930192.png)
+
+
+
+4扩展
+
+![image-20251023103500916](D:\01\技术\感获\md文档\JavaSE.assets\image-20251023103500916.png)
+
+这段内容只读![image-20251023103515856](D:\01\技术\感获\md文档\JavaSE.assets\image-20251023103515856.png)
+
+所以 获取驱动这部分 不需要写了![image-20251023103541568](D:\01\技术\感获\md文档\JavaSE.assets\image-20251023103541568.png)
+
+但实际还是要写，因为明确，而且如果有很多驱动，就乱了
+
+
+
+5对配置文件优化，避免硬编码（内容固定，需要手动修改的部分）
+
+src下创建文件xxx.properties文件
+
+```properties
+user=root
+password=asdAsdlkj978000*
+url=jdbc:mysql://localhost:3306/actor
+driver=com.mysql.jdbc.Driver
+```
+
+```java
+public static void fun() throws Exception {
+
+    //加载prop配置文件
+    Properties prop = new Properties();
+    prop.load(new FileInputStream("src\\mysql.properties"));
+    String user = prop.getProperty("user");
+    String password = prop.getProperty("password");
+    String url = prop.getProperty("url");
+    String driver = prop.getProperty("driver");
+
+    //通过反射获取驱动，建议写上
+    Class<?> aClass = Class.forName(driver);
+
+    Connection connect = DriverManager.getConnection(url, user, password);
+
+    String sql = "insert into actor values(null, 'asd', '', '1111-11-11', '111')";
+    Statement statement = connect.createStatement();
+    int resRows = statement.executeUpdate(sql);
+    System.out.println(resRows > 0 ? "cl" : "bl");
+
+
+}
+```
+
+
+
+
+
+## ResultSet
+
+```java
+int resRows = statement.executeUpdate(sql);
+```
+
+之前用int类接收，用于判断是否成功
+
+实际上有专门接受 数据库生成的结果集 的类，用于查看数据库数据
+
+```java
+ResultSet resultset = statement.executeQuery(sql);
+```
+
+光标放在第1行，next()移动光标并累加，直至返回false(无行)
+
+```java
+ResultSet resultset = statement.executeQuery(sql);
+while (resultset.next()) {
+    int id = resultset.getInt("id");
+    String name = resultset.getString("name");
+    int age = resultset.getInt("age");
+    System.out.println(name + " " + age + " " + id);
+}
+
+resultset.close();
+```
+
+
+
+
+
+### ResultSet底层
+
+DeBug，找到
+
+![image-20251023112340694](D:\01\技术\感获\md文档\JavaSE.assets\image-20251023112340694.png)结果集
+
+![image-20251023112347208](D:\01\技术\感获\md文档\JavaSE.assets\image-20251023112347208.png)行元素![image-20251023112512147](D:\01\技术\感获\md文档\JavaSE.assets\image-20251023112512147.png)显示有4行
+
+![image-20251023112546728](D:\01\技术\感获\md文档\JavaSE.assets\image-20251023112546728.png)每行的列元素，元素以Ascii显示![image-20251023112617792](D:\01\技术\感获\md文档\JavaSE.assets\image-20251023112617792.png)
+
+
+
+sql注入
+
+![image-20251023113221039](D:\01\技术\感获\md文档\JavaSE.assets\image-20251023113221039.png)
+
+**![image-20251023112733873](D:\01\技术\感获\md文档\JavaSE.assets\image-20251023112733873.png)**
+
+
+
+```java
+// sql语句用？作为占位符替代具体参数值
+String sql = "select name, pwd from actor where name = ? and pwd = ?";
+PreparedStatement preparedStatement = connect.prepareStatement(sql);
+//通过 set类型 方法，将properties文件中预设值给 指定位置 指定值
+preparedStatement.setString(1, user);
+preparedStatement.setString(2, password);
+
+ResultSet resultset = preparedStatement.executeQuery(sql);
+while (resultset.next()) {
+    int id = resultset.getInt("id");
+    String name = resultset.getString("name");
+    String sex = resultset.getString("sex");
+    String borndate = resultset.getString("borndate");
+    String phone = resultset.getString("phone");
+    System.out.println(name + " " + name + " " + sex+ " " + borndate + " " + phone);
+}
+
+resultset.close();
+```
+
+
+
+总结下来，目前，JDBC操作最好的方案：
+
+* properties配置数据库信息，避免硬编码
+* 使用反射获取Driver
+* 使用DriverManager建立连接
+* 使用PreparedStatement替代Statement
+
+```java
+public static void fun() throws Exception {
+
+    // 相关资源处理
+    Properties properties = new Properties();
+    properties.load(new FileInputStream("src\\mysql.properties"));
+    String driver = properties.getProperty("driver");
+    String url = properties.getProperty("url");
+    String user = properties.getProperty("user");
+    String password = properties.getProperty("password");
+
+    //驱动和连接
+    Class<?> aClass = Class.forName(driver);
+    Connection connection = DriverManager.getConnection(url, user, password);
+
+    // sql操作
+    String sql = "select * from actor where id = ? and name = ?";
+    PreparedStatement preparedStatement = connection.prepareStatement(sql);
+    preparedStatement.setInt(1, 7);
+    preparedStatement.setString(2, "asd");
+    ResultSet resSet = preparedStatement.executeQuery();
+
+    //获取
+    while (resSet.next()) {
+        int id = resSet.getInt("id");
+        String name = resSet.getString("name");
+        String sex = resSet.getString("sex");
+        String borndate = resSet.getString("borndate");
+        String phone = resSet.getString("phone");
+        System.out.println(name + " " + name + " " + sex + " " + borndate + " " + phone);
+    }
+
+    //资源回收
+    resSet.close();
+    preparedStatement.close();
+    connection.close();
+
+}
+```
+
+![image-20251023114620300](D:\01\技术\感获\md文档\JavaSE.assets\image-20251023114620300.png)
+
+![image-20251023114732954](D:\01\技术\感获\md文档\JavaSE.assets\image-20251023114732954.png)
+
+
+
+
+
+按照以上注释内容分为不同方法，打包成工具类，方便使用
+
+
+
+
+
+## JDBC处理事务
+
+![image-20251023131204376](D:\01\技术\感获\md文档\JavaSE.assets\image-20251023131204376.png)
+
+之前内容是一条条语句执行，且自动提交
+
+根据数据库 事务 的概念，在java中用JDBC进行事务操作
+
+比如转账，A转B，拆分为A扣款，B加款，如果1成了，但b败了，那100块就不见了，这2条语句必须连贯执行全部成功，否则回滚
+
+```java
+connection.setAutoCommit(false);
+
+//执行sql语句，同时捕获异常，若捕获，则进行回滚操作
+
+connection.rollback();
+
+
+```
+
+## JDBC批处理
+
+一组语句一次性给数据库批处理，效率更高
+
+![](D:\01\技术\感获\md文档\JavaSE.assets\image-20251023132939648.png)
+
+
+
+首先在url尾部添加
+
+```
+?rewriteBatchedStatements=true
+```
+
+![image-20251023133112514](D:\01\技术\感获\md文档\JavaSE.assets\image-20251023133112514.png)
+
+
+
+可以设定批处理条件
+
+![image-20251023133217619](D:\01\技术\感获\md文档\JavaSE.assets\image-20251023133217619.png)
 
 
 
